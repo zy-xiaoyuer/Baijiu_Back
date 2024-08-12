@@ -1,0 +1,33 @@
+
+# ?????
+server:
+  port: 8081
+
+spring:
+  application:
+    name: BaijiuBack
+# ?????
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/baijiu?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: 025626Ltt@
+# ??MyBatis Plus
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+mybatis:
+  mapper-locations=classpath:/mapper/*:
+    xml:
+    # ??Druid?????
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 20 # ?????
+      min-idle: 10 # ???????
+      max-active: 100 # ?????
+
