@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -19,4 +21,5 @@ import org.springframework.stereotype.Service;
 public interface UserService extends IService<User> {
 
     int getUserByMassage(@Param("name") String name, @Param("password") String password);
+    List<User> list();
 }

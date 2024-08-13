@@ -38,4 +38,11 @@ public class UserController {
         return str;
     }
 
+    @GetMapping("/api/loadAll")
+    @ResponseBody
+    public List<User> loadAllUsers() {
+        return userService.list();
+    }
+
+
 }
