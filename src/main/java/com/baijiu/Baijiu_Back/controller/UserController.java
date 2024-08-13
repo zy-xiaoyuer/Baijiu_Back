@@ -25,23 +25,17 @@ public class UserController {
     private UserService userService;
 
     @CrossOrigin
-    @PostMapping(value = "/login")
+    @PostMapping("/api/getUserPassword") // @RequestMapping注解创建接口
     @ResponseBody
-    public ApiResponse login(@RequestBody User requestUser) {
-        // 获取用户名和密码
-        String username = requestUser.getName();
-        String password = requestUser.getPassword();
-        // 对html标签进行转义，防止XSS攻击
-        username = HtmlUtils.htmlEscape(username);
-        // 调用用户服务对象的登录方法
-        User user = userService.login(username, password);
-        // 判断登录是否成功
-        // 判断登录是否成功
-        if (user != null) {
-            return new ApiResponse(200, "登录成功", user);
-        } else {
-            System.out.println("用户名或密码有误！");
-            return new ApiResponse(400, "用户名或密码有误！");
+    public String userLogin(@RequestBody User user) { // @RequestBody注解方便找到user实体
+
+        System.out.println("User : " + user);
+        String str = "error";
+        int count = userService.getUserByMassage(user.getName(), user.getPassword());
+        if (count != 0) {
+            str = "ok";
         }
+        return str;
     }
+
 }

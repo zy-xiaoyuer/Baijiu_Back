@@ -16,6 +16,5 @@ import org.apache.ibatis.annotations.Select;
  */
 @Mapper//纳入Spring容器管理
 public interface UserMapper extends BaseMapper<User> {
-    User login(@Param("name") String name, @Param("password") String password);
-
+    User getUserByMassage(@Param("name") String name, @Param("password") String password);
 }

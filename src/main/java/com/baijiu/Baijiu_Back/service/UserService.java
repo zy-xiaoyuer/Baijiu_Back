@@ -3,6 +3,7 @@ package com.baijiu.Baijiu_Back.service;
 import com.baijiu.Baijiu_Back.entity.User;
 import com.baijiu.Baijiu_Back.mapper.UserMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService extends IService<User> {
 
-    User login(String name, String password);
+    int getUserByMassage(@Param("name") String name, @Param("password") String password);
 }
