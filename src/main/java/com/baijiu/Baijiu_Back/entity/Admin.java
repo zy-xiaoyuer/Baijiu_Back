@@ -14,51 +14,41 @@ import lombok.Setter;
  * </p>
  *
  * @author ltt
- * @since 2024-08-12
+ * @since 2024-08-15
  */
 @Getter
 @Setter
-@ApiModel(value = "User对象", description = "")
-public class User implements Serializable {
+@ApiModel(value = "Admin对象", description = "")
+public class Admin implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("主键")
+    @ApiModelProperty("用户的主键编号")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("账号")
-    private String no;
-
-    @ApiModelProperty("名字")
-    private String name;
+    @ApiModelProperty("用户名")
+    private String username;
 
     @ApiModelProperty("密码")
     private String password;
 
-    @ApiModelProperty("年龄")
-    private Integer age;
-
-    @ApiModelProperty("性别")
-    private Integer sex;
-
-    @ApiModelProperty("电话")
-    private String phone;
-
-    @ApiModelProperty("角色  0超级管理员  1管理员   2普通账号")
-    private Integer roleId;
-
-    @ApiModelProperty("是否有效，Y 有效，其他无效")
-    private String isvalid;
-
-
-    public String getName() {
-        return name;
+    public Integer getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(Integer id) {
+        this.id = id;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -71,9 +61,8 @@ public class User implements Serializable {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", username='" + name + '\'' +
+                ", username='" + username+ '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }
-
 }

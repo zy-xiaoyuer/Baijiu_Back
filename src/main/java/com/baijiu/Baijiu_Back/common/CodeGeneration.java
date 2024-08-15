@@ -33,7 +33,7 @@ public class CodeGeneration {
 
         //需要生成代码的数据库名
         List<String> tables = new ArrayList<>();
-        tables.add("user");//在这修改表名
+        tables.add("users");//在这修改表名
         FastAutoGenerator.create(url, username, password)
                 // 全局配置
                 .globalConfig(builder -> {
@@ -53,7 +53,7 @@ public class CodeGeneration {
                             .service(service)
                             .serviceImpl(serviceImpl)
                             .controller(controller)
-                            .xml("resources/" +mapperXml);
+                            .xml(mapperXml);
                 })
                 // 策略配置
                 .strategyConfig(builder -> {
