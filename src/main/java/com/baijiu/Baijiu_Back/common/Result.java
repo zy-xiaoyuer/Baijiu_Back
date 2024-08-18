@@ -12,91 +12,41 @@ import java.util.List;
  */
 
 @Data
-@NoArgsConstructor
-public class Result<T> implements Serializable {
-    /**
-     * 通信数据
-     */
-    private T data;
-    /**
-     * 通信状态
-     */
-    private boolean success = true;
-    /**
-     * 通信描述
-     */
-    private String msg = "操作成功";
 
-    /**
-     * 用于分页结果的静态方法
-     * @param data 分页数据记录
-     * @param total 总记录数
-     * @param success 操作是否成功
-     * @param msg 操作消息
-     * @return Result 实例
-     */
+public class Result {
+    private int code;//编码 200/400
+    private String msg;//成功/失败
+    private  Long total;//总记录数
+    private Object data;//数据
 
-    public static <T> Result<T> ofPage(List<T> data, long total, boolean success, String msg) {
-        return (Result<T>) new Result<>(new PageData<>(data, total), success, msg);
-    }
-    /**
-     * 封装分页数据的内部类
-     */
-    public static class PageData<T> implements Serializable {
-        private List<T> records;
-        private long total;
+    public Result() {}
 
-        public PageData(List<T> records, long total) {
-            this.records = records;
-            this.total = total;
-        }
-
-        public List<T> getRecords() {
-            return records;
-        }
-
-        public long getTotal() {
-            return total;
-        }
+    public static Result fail()
+    {
+        return result(400,"失败",0l,null);
     }
-    /**
-     * 通过静态方法获取实例
-     */
-    public T getData() {
-        return data;
+    public static Result success()
+    {
+        return result(200,"成功",0l,null);
     }
-    public boolean isSuccess() {
-        return success;
-    }
-    public String getMessage() {
-        return msg;
-    }
-    public static <T> Result<T> of(T data) {
-        return new Result<>(data);
+    public static Result success(Object data)
+    {
+        return result(200,"成功",0l,data);
     }
 
-    public static <T> Result<T> of(T data, boolean success) {
-        return new Result<>(data, success);
-    }
-
-    public static <T> Result<T> of(T data, boolean success, String msg) {
-        return new Result<>(data, success, msg);
+   public static Result success(Object data, Long total)
+    {
+        return result(200,"成功",total,data);
     }
 
 
-    private Result(T data) {
-        this.data = data;
-    }
-
-    private Result(T data, boolean success) {
-        this.data = data;
-        this.success = success;
-    }
-
-    private Result(T data, boolean success, String msg) {
-        this.data = data;
-        this.success = success;
-        this.msg = msg;
+    public static Result result(int code,String msg,Long total,Object data) {
+       Result res=new Result();
+       res.setCode(code);
+       res.setTotal(total);
+       res.setData(data);
+       res.setMsg(msg);
+       return res;
     }
 
 }

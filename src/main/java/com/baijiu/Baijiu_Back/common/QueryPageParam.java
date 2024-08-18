@@ -13,7 +13,15 @@ public class QueryPageParam {
     private int pageSize=PAGE_SIZE;
     private int pageNum=Page_NUM;
 
-    private HashMap param;
+    private HashMap params=new HashMap();
+
+    public HashMap getParam() {
+        return params;
+    }
+
+    public void setParam(HashMap params) {
+        this.params = params;
+    }
 
     public int getPageSize() {
         return pageSize;

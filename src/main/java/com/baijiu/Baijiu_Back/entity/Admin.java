@@ -32,6 +32,7 @@ public class Admin implements Serializable {
 
     @ApiModelProperty("密码")
     private String password;
+    //加年龄和手机号
 
     public Integer getId() {
         return id;
