@@ -1,18 +1,16 @@
 package com.baijiu.Baijiu_Back.service.Impl;
 
+import com.baijiu.Baijiu_Back.entity.PoemWine;
 import com.baijiu.Baijiu_Back.entity.Users;
+import com.baijiu.Baijiu_Back.mapper.PoemWineMapper;
 import com.baijiu.Baijiu_Back.mapper.UsersMapper;
-import com.baijiu.Baijiu_Back.service.UsersService;
+import com.baijiu.Baijiu_Back.service.PoemWineService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * <p>
@@ -20,34 +18,30 @@ import java.util.List;
  * </p>
  *
  * @author ltt
- * @since 2024-08-15
+ * @since 2024-08-18
  */
 @Service
-public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements UsersService {
-
+public class PoemWineServiceImpl extends ServiceImpl<PoemWineMapper, PoemWine> implements PoemWineService {
     @Autowired
-    private UsersMapper usersMapper;
+    private PoemWineMapper poemWineMapper;
 
 
     @Override
-    public IPage<Users> getUserList(IPage<Users> page, String search) {
+    public IPage<PoemWine> getUserList(IPage<PoemWine> page, String search) {
         QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
         if (search != null && !search.isEmpty()) {
             queryWrapper.like("username", search);
         }
-        return usersMapper.selectPage(page, queryWrapper.getSqlSegment() );
+        return poemWineMapper.selectPage(page, queryWrapper.getSqlSegment() );
     }
 
     @Override
-    public IPage pageC(IPage<Users> page) {
-        return usersMapper.pageC(page);
+    public IPage pageC(IPage<PoemWine> page) {
+        return poemWineMapper.pageC(page);
     }
 
     @Override
-    public IPage pageCC(IPage<Users> page, Wrapper wrapper) {
-        return usersMapper.pageCC(page, wrapper);
+    public IPage pageCC(IPage<PoemWine> page, Wrapper wrapper) {
+        return poemWineMapper.pageCC(page, wrapper);
     }
-
-
-
 }

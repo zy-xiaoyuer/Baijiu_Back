@@ -48,13 +48,7 @@ public class UsersController {
         return usersService.save(users)?Result.success():Result.fail();
 
     }
-    //更新
-    @PostMapping("/api/update")
-    public Result update(@RequestBody Users users){
 
-            return usersService.updateById(users)?Result.success():Result.fail();
-
-    }
     //修改
     @PostMapping("/api/mod")
     public Result mod(@RequestBody Users users){
@@ -66,7 +60,7 @@ public class UsersController {
     public Result delete(@RequestParam("id") Integer id) {
             return usersService.removeById(id) ? Result.success() : Result.fail();
     }
-    //查询(模糊、匹配）
+
     // 分页查询（模糊匹配用户名）
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
@@ -83,76 +77,6 @@ public class UsersController {
         IPage<Users> result = usersService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
-
-
-    //分页
-    @PostMapping("/api/listPageC")
-    public Result listPageC(@RequestBody QueryPageParam queryPageParam)
-    {
-        HashMap param =queryPageParam.getParam();
-        String username=(String)param.get("username");
-        System.out.println("username=="+(String)param.get("username"));
-        Page<Users> page=new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
-        //page.setCurrent(queryPageParam.getPageNum());//也可以这样设置
-
-        LambdaQueryWrapper<Users> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        if (username != null && !username.isEmpty()) {
-            lambdaQueryWrapper.like(Users::getUsername, username);
-        }
-
-        //还可以添加其他条件
-        IPage result=usersService.page(page,lambdaQueryWrapper);
-        System.out.println("total=="+result.getTotal());
-        return  Result.success(result.getRecords(),result.getTotal());
-
-    }
-
-    @PostMapping("/api/listPageCC")
-    public List<Users> listPageCC(@RequestBody QueryPageParam queryPageParam)
-    {
-        System.out.println("num=="+queryPageParam.getPageNum());
-        System.out.println("size=="+queryPageParam.getPageSize());
-        HashMap param =queryPageParam.getParam();
-        String name=(String)param.get("username");
-        System.out.println("username=="+(String)param.get("username"));
-
-        Page<Users> page=new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
-        //page.setCurrent(queryPageParam.getPageNum());//也可以这样设置
-
-        LambdaQueryWrapper<Users> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(Users::getUsername,name);
-        //还可以添加其他条件
-
-        //IPage result=usersService.pageC(page);
-        IPage result=usersService.pageCC(page,lambdaQueryWrapper);
-        System.out.println("total=="+result.getTotal());
-
-        return  result.getRecords();
-
-    }
-    @PostMapping("/api/listPageC1")
-    public Result listPageC1(@RequestBody QueryPageParam queryPageParam)
-    {
-
-        HashMap params =queryPageParam.getParam();
-        String name=(String)params.get("username");
-        System.out.println("username=="+(String)params.get("username"));
-
-        Page<Users> page=new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
-        //page.setCurrent(queryPageParam.getPageNum());//也可以这样设置
-
-        LambdaQueryWrapper<Users> lambdaQueryWrapper=new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(Users::getUsername,name);
-        //还可以添加其他条件
-
-        //IPage result=usersService.pageC(page);
-        IPage result=usersService.pageCC(page,lambdaQueryWrapper);
-        System.out.println("total=="+result.getTotal());
-
-        return  Result.success(result.getRecords(),result.getTotal());
-
-    }
-
 
 }
 
