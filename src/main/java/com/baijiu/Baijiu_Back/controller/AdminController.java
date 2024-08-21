@@ -1,5 +1,6 @@
 package com.baijiu.Baijiu_Back.controller;
 
+import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Admin;
 import com.baijiu.Baijiu_Back.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,18 @@ public class AdminController {
     @CrossOrigin
     @PostMapping("/api/getUserPassword") // @RequestMapping注解创建接口
     @ResponseBody
-    public String adminLogin(@RequestBody Admin admin) {
+    public Result adminLogin(@RequestBody Admin admin) {
 
         System.out.println("User : " + admin);
         String str = "error";
-        int count =adminService.getAdminByMassage(admin.getUsername(), admin.getPassword());
-        if (count != 0) {
-            str = "ok";
-        }
-        return str;
-    }
+        int count = adminService.getAdminByMassage(admin.getUsername(), admin.getPassword());
 
+        if (count != 0) {
+            return Result.success(); // 登录成功，返回成功结果
+        } else {
+            return Result.fail(); // 登录失败，返回失败结果和错误信息
+        }
+
+
+    }
 }

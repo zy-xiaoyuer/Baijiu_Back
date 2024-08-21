@@ -1,6 +1,6 @@
 package com.baijiu.Baijiu_Back.service;
 
-import com.baijiu.Baijiu_Back.entity.PoemWine;
+import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Users;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,12 +13,13 @@ import org.apache.ibatis.annotations.Param;
  * </p>
  *
  * @author ltt
- * @since 2024-08-18
+ * @since 2024-08-19
  */
-public interface PoemWineService extends IService<PoemWine> {
-    IPage<PoemWine> getUserList(IPage<PoemWine> page, @Param("search") String search);
+public interface PoemsbydynastyService extends IService<Poemsbydynasty> {
+    IPage<Poemsbydynasty> getUserList(IPage<Poemsbydynasty> page, @Param("search") String search);
 
-    IPage pageC(IPage<PoemWine> page);
+    IPage pageC(IPage<Poemsbydynasty> page);
 
-    IPage pageCC(IPage<PoemWine> page, Wrapper wrapper);
+    IPage pageCC(IPage<Poemsbydynasty> page, Wrapper wrapper);
+
 }

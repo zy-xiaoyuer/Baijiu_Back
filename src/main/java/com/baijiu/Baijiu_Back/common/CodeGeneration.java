@@ -33,7 +33,7 @@ public class CodeGeneration {
 
         //需要生成代码的数据库名
         List<String> tables = new ArrayList<>();
-        tables.add("poemsbylocation");//在这修改表名
+        tables.add("poemimages");//在这修改表名
         FastAutoGenerator.create(url, username, password)
                 // 全局配置
                 .globalConfig(builder -> {

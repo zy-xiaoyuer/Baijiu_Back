@@ -1,7 +1,7 @@
 package com.baijiu.Baijiu_Back.mapper;
 
-import com.baijiu.Baijiu_Back.entity.PoemWine;
-import com.baijiu.Baijiu_Back.entity.Users;
+import com.baijiu.Baijiu_Back.entity.Poemimages;
+import com.baijiu.Baijiu_Back.entity.VesselTotal;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,16 +15,13 @@ import org.apache.ibatis.annotations.Param;
  * </p>
  *
  * @author ltt
- * @since 2024-08-18
+ * @since 2024-08-21
  */
 @Mapper
-public interface PoemWineMapper extends BaseMapper<PoemWine> {
+public interface PoemimagesMapper extends BaseMapper<Poemimages> {
+    IPage<Poemimages> selectPage(IPage<Poemimages> page, @Param("sql") String sql);
 
-    IPage<PoemWine> selectPage(IPage<PoemWine> page, @Param("sql") String sql);
+    IPage pageC(IPage<Poemimages> page);
 
-
-    IPage pageC(IPage<PoemWine> page);
-
-    IPage pageCC(IPage<PoemWine> page, @Param(Constants.WRAPPER) Wrapper wrapper);
-
+    IPage pageCC(IPage<Poemimages> page, @Param(Constants.WRAPPER) Wrapper wrapper);
 }
