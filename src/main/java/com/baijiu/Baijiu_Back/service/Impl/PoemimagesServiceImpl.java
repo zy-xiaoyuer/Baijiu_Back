@@ -6,11 +6,15 @@ import com.baijiu.Baijiu_Back.mapper.PoemimagesMapper;
 import com.baijiu.Baijiu_Back.mapper.VesselTotalMapper;
 import com.baijiu.Baijiu_Back.service.PoemimagesService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * <p>
@@ -44,5 +48,6 @@ public class PoemimagesServiceImpl extends ServiceImpl<PoemimagesMapper, Poemima
     public IPage pageCC(IPage<Poemimages> page, Wrapper wrapper) {
         return poemimagesMapper.pageCC(page, wrapper);
     }
+
 
 }

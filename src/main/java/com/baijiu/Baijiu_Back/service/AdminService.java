@@ -14,5 +14,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface AdminService extends IService<Admin> {
     int getAdminByMassage(@Param("username") String name, @Param("password") String password);
+    boolean deleteAccount(Integer adminId);
 
 }

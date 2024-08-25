@@ -21,4 +21,6 @@ public interface PoemimagesService extends IService<Poemimages> {
     IPage pageC(IPage<Poemimages> page);
 
     IPage pageCC(IPage<Poemimages> page, Wrapper wrapper);
+
+
 }

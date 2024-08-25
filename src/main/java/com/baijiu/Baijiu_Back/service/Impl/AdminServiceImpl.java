@@ -30,6 +30,14 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         // 用户不存在或密码错误
         return 0;
     }
+    @Override
+    public boolean deleteAccount(Integer adminId) {
+        if (adminId == null) {
+            return false;
+        }
+        // 执行删除操作
+        return adminMapper.deleteById(adminId) > 0;
+    }
 
 
 }

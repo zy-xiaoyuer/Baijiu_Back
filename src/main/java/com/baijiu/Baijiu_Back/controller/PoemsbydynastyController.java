@@ -4,6 +4,8 @@ import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
+import com.baijiu.Baijiu_Back.entity.Users;
+import com.baijiu.Baijiu_Back.entity.VesselTotal;
 import com.baijiu.Baijiu_Back.service.PoemsbydynastyService;
 import com.baijiu.Baijiu_Back.service.PoemsbylocationService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -35,7 +37,7 @@ public class PoemsbydynastyController {
     public List<Poemsbydynasty> list() {
         return poemsbydynastyService.list(); // 直接返回用户列表
     }
-    @GetMapping("/api/findByUsername")
+    @GetMapping("/api/findByTitle")
     public Result findByUsername(@RequestParam String title)
     {
         List list=poemsbydynastyService.lambdaQuery().eq(Poemsbydynasty::getTitle,title).list();
@@ -50,7 +52,6 @@ public class PoemsbydynastyController {
     }
 
     //修改
-    //修改
     @PostMapping("/api/mod")
     public Result mod(@RequestBody Poemsbydynasty poemsbydynasty){
 
@@ -62,21 +63,19 @@ public class PoemsbydynastyController {
         return poemsbydynastyService.removeById(id) ? Result.success() : Result.fail();
     }
 
-    // 分页查询（按作者或朝代精确查询）
+    // 分页查询（按标题精确查询）
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap params = queryPageParam.getParam();
-        String author = (String) params.get("author");
-        String dynasty = (String) params.get("dynasty");
+        String title = (String) params.get("title");
 
         Page<Poemsbydynasty> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
         LambdaQueryWrapper<Poemsbydynasty> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(author)) {
-            queryWrapper.eq(Poemsbydynasty::getAuthor, author);
-        } else if (StringUtils.hasText(dynasty)) {
-            queryWrapper.eq(Poemsbydynasty::getDynasty, dynasty);
+        if (StringUtils.hasText(title)) {
+            queryWrapper.eq(Poemsbydynasty::getTitle, title);
+           // System.out.println("Applying LIKE condition for username: " + title); // 调试输出
         }
-        System.out.println(queryWrapper.toString()); // 打印出queryWrapper的内容，以便调试
+
         IPage<Poemsbydynasty> result = poemsbydynastyService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }

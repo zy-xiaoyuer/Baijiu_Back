@@ -3,7 +3,10 @@ package com.baijiu.Baijiu_Back.controller;
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Poemimages;
-import com.baijiu.Baijiu_Back.entity.VesselTotal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
 import com.baijiu.Baijiu_Back.service.PoemimagesService;
 import com.baijiu.Baijiu_Back.service.VesselTotalService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -32,6 +35,34 @@ public class PoemimagesController {
     @Autowired
     private PoemimagesService poemimagesService;
 
+    @PostMapping("/api/upload")
+    public ResponseEntity<Result> uploadImage(@RequestParam("image") MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body(Result.fail());
+            }
+            byte[] fileBytes = file.getBytes(); // 获取文件字节数据
+
+            Poemimages poemimages = new Poemimages();
+            poemimages.setImage(fileBytes); // 假设image是byte[]类型
+            poemimages.setImagename(file.getOriginalFilename()); // 设置图片名称
+            boolean saved = poemimagesService.save(poemimages); // 保存到数据库
+            if (saved) {
+                return ResponseEntity.ok(Result.success("图片上传成功"));
+            } else {
+                return ResponseEntity.internalServerError().body(Result.fail());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Result.fail());
+        }
+    }
+    @GetMapping("/api/findByPictureName")
+    public Result findByUsername(@RequestParam String imagename)
+    {
+        List list=poemimagesService.lambdaQuery().eq(Poemimages::getImagename,imagename).list();
+        return list.size()>0?Result.success():Result.fail();
+    }
     @GetMapping("/api/get-image/{id}")
     public void getImage(@PathVariable Integer id, HttpServletResponse response) {
         Poemimages poemimages = poemimagesService.getById(id);

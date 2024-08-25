@@ -3,6 +3,7 @@ package com.baijiu.Baijiu_Back.controller;
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Users;
+import com.baijiu.Baijiu_Back.entity.VesselTotal;
 import com.baijiu.Baijiu_Back.service.UsersService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -44,7 +45,6 @@ public class UsersController {
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody Users users){
-        //调用service实现新增用户
         return usersService.save(users)?Result.success():Result.fail();
 
     }
@@ -61,7 +61,7 @@ public class UsersController {
             return usersService.removeById(id) ? Result.success() : Result.fail();
     }
 
-    // 分页查询（模糊匹配用户名）
+    // 分页查询（精确匹配用户名）
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap params = queryPageParam.getParam();
