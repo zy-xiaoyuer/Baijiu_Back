@@ -2,8 +2,10 @@ package com.baijiu.Baijiu_Back.controller;
 
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
+import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
+import com.baijiu.Baijiu_Back.entity.Vessel;
 import com.baijiu.Baijiu_Back.entity.VesselTotal;
-
+import com.baijiu.Baijiu_Back.service.VesselService;
 import com.baijiu.Baijiu_Back.service.VesselTotalService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -23,22 +25,22 @@ import java.util.List;
  * </p>
  *
  * @author ltt
- * @since 2024-08-19
+ * @since 2024-08-26
  */
 @RestController
-@RequestMapping("/vesselTotal")
-public class VesselTotalController {
-
+@RequestMapping("/vessel")
+public class VesselController {
     @Autowired
-    private VesselTotalService vesselTotalService;
+    private VesselService vesselService;
 
     @GetMapping("/api/get-image/{id}")
     public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-        VesselTotal vesselTotal = vesselTotalService.getById(id);
-        if (vesselTotal != null && vesselTotal.getPicture() != null) {
+        Vessel vessel = vesselService.getById(id);
+        if (vessel != null && vessel.getPicture() != null) {
+
             response.setContentType("image/jpeg");
             try {
-                response.getOutputStream().write(vesselTotal.getPicture());
+                response.getOutputStream().write(vessel.getPicture());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -48,52 +50,46 @@ public class VesselTotalController {
     }
     //列表
     @GetMapping("/api/list")
-    public List<VesselTotal> list() {
-        return vesselTotalService.list();
-    }
-
-    @GetMapping("/api/findByname")
-    public Result findByUsername(@RequestParam String name)
-    {
-        List list=vesselTotalService.lambdaQuery().eq(VesselTotal::getName,name).list();
-        return list.size()>0?Result.success():Result.fail();
+    public List<Vessel> list() {
+        return vesselService.list(); // 直接返回用户列表
     }
 
 
     //新增
     @PostMapping("/api/save")
-    public Result save(@RequestBody VesselTotal vesselTotal){
+    public Result save(@RequestBody Vessel vessel){
         //调用service实现新增用户
-        return vesselTotalService.save(vesselTotal)?Result.success():Result.fail();
+        return vesselService.save(vessel)?Result.success():Result.fail();
 
     }
 
     //修改
     @PostMapping("/api/mod")
-    public Result mod(@RequestBody VesselTotal vesselTotal){
+    public Result mod(@RequestBody Vessel vessel){
 
-        return vesselTotalService.updateById(vesselTotal) ? Result.success() : Result.fail();
+        return vesselService.updateById(vessel) ? Result.success() : Result.fail();
     }
     //删除
     @GetMapping("/api/delete")
     public Result delete(@RequestParam("id") Integer id) {
-        return vesselTotalService.removeById(id) ? Result.success() : Result.fail();
+        return vesselService.removeById(id) ? Result.success() : Result.fail();
     }
 
     // 分页查询（模糊匹配用户名）
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap params = queryPageParam.getParam();
-        String name = (String) params.get("name");
+        String search = (String) params.get("search");
 
-        Page<VesselTotal> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
-        LambdaQueryWrapper<VesselTotal> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(name)) { // 使用 StringUtils 来检查字符串是否不为空或全为空格
-            queryWrapper.like(VesselTotal::getName, name);
-            System.out.println("Applying LIKE condition for username: " + name); // 调试输出
+        Page<Vessel> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
+        LambdaQueryWrapper<Vessel> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(search)) {
+            queryWrapper.and(w ->
+                    w.eq(Vessel::getAge, search).or().eq(Vessel::getNow, search)
+            );
         }
-        System.out.println(queryWrapper.toString()); // 打印出queryWrapper的内容，以便调试
-        IPage<VesselTotal> result = vesselTotalService.page(page, queryWrapper);
+
+        IPage<Vessel> result = vesselService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
 

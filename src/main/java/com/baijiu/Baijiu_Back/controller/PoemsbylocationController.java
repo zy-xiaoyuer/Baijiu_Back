@@ -2,6 +2,7 @@ package com.baijiu.Baijiu_Back.controller;
 
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
+import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
 import com.baijiu.Baijiu_Back.entity.Users;
 import com.baijiu.Baijiu_Back.service.PoemsbylocationService;
@@ -36,7 +37,7 @@ public class PoemsbylocationController {
     public List<Poemsbylocation> list() {
         return poemsbylocationService.list(); // 直接返回用户列表
     }
-    @GetMapping("/api/findByUsername")
+    @GetMapping("/api/findByPoetry")
     public Result findByUsername(@RequestParam String poetry)
     {
         List list=poemsbylocationService.lambdaQuery().eq(Poemsbylocation::getPoetry,poetry).list();
@@ -62,19 +63,20 @@ public class PoemsbylocationController {
         return poemsbylocationService.removeById(id) ? Result.success() : Result.fail();
     }
 
-    // 分页查询（模糊匹配用户名）
+    // 分页查询（按作者或朝代精确查询）
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap params = queryPageParam.getParam();
-        String poetry = (String) params.get("poetry");
+        String search = (String) params.get("search");
 
         Page<Poemsbylocation> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
         LambdaQueryWrapper<Poemsbylocation> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(poetry)) { // 使用 StringUtils 来检查字符串是否不为空或全为空格
-            queryWrapper.like(Poemsbylocation::getPoetry, poetry);
-            System.out.println("Applying LIKE condition for username: " + poetry); // 调试输出
+        if (StringUtils.hasText(search)) {
+            queryWrapper.and(w ->
+                    w.eq(Poemsbylocation::getAuthor, search).or().eq(Poemsbylocation::getDynasty, search)
+            );
         }
-        System.out.println(queryWrapper.toString()); // 打印出queryWrapper的内容，以便调试
+        //System.out.println(queryWrapper.toString());
         IPage<Poemsbylocation> result = poemsbylocationService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }

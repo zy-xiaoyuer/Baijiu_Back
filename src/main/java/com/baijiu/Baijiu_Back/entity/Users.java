@@ -42,6 +42,13 @@ public class Users implements Serializable {
     @ApiModelProperty("邮箱")
     private String email;
 
+    @ApiModelProperty("年龄")
+    private Integer age;
+
+    @ApiModelProperty("手机号")
+    private String phone;
+
+
     public Integer getId() {
         return id;
     }
@@ -88,5 +95,21 @@ public class Users implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

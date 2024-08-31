@@ -63,17 +63,19 @@ public class PoemsbydynastyController {
         return poemsbydynastyService.removeById(id) ? Result.success() : Result.fail();
     }
 
-    // 分页查询（按标题精确查询）
+    // 分页查询（按作者或朝代精确查询）
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap params = queryPageParam.getParam();
-        String title = (String) params.get("title");
+        String search = (String) params.get("search");
 
         Page<Poemsbydynasty> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
         LambdaQueryWrapper<Poemsbydynasty> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(title)) {
-            queryWrapper.eq(Poemsbydynasty::getTitle, title);
-           // System.out.println("Applying LIKE condition for username: " + title); // 调试输出
+
+        if (StringUtils.hasText(search)) {
+            queryWrapper.and(w ->
+                    w.eq(Poemsbydynasty::getAuthor, search).or().eq(Poemsbydynasty::getDynasty, search)
+            );
         }
 
         IPage<Poemsbydynasty> result = poemsbydynastyService.page(page, queryWrapper);

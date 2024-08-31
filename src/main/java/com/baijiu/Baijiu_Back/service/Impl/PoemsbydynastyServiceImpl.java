@@ -30,7 +30,7 @@ public class PoemsbydynastyServiceImpl extends ServiceImpl<PoemsbydynastyMapper,
     public IPage<Poemsbydynasty> getUserList(IPage<Poemsbydynasty> page, String search) {
         QueryWrapper<Poemsbydynasty> queryWrapper = new QueryWrapper<>();
         if (search != null && !search.isEmpty()) {
-            queryWrapper.like("title", search);
+            queryWrapper.like("poetry", search);
         }
         return poemsbydynastyMapper.selectPage(page, queryWrapper.getSqlSegment() );
     }
