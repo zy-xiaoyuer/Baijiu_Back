@@ -28,17 +28,17 @@ public class AdminController {
     public Result adminLogin(@RequestBody Admin admin) {
         int count = adminService.getAdminByMassage(admin.getUsername(), admin.getPassword());
         if (count != 0) {
-            return Result.success(); // 登录成功，返回成功结果
+            return Result.success();
             
         } else {
-            return Result.fail(); // 登录失败，返回失败结果和错误信息
+            return Result.fail();
         }
 
     }
     @ResponseBody
     @PostMapping("/api/delete-account")
     public Result deleteAccount(@RequestBody Admin admin) {
-        boolean isDeleted = adminService.deleteAccount(admin.getId()); // 假设admin.getId()可以获取到用户ID
+        boolean isDeleted = adminService.deleteAccount(admin.getId());
         if (isDeleted) {
 
             return Result.success("账号已注销");

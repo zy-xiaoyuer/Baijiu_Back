@@ -1,5 +1,4 @@
 package com.baijiu.Baijiu_Back.controller;
-
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.VesselTotal;
@@ -10,12 +9,24 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * <p>
@@ -32,20 +43,125 @@ public class VesselTotalController {
     @Autowired
     private VesselTotalService vesselTotalService;
 
-    @GetMapping("/api/get-image/{id}")
-    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-        VesselTotal vesselTotal = vesselTotalService.getById(id);
-        if (vesselTotal != null && vesselTotal.getPicture() != null) {
-            response.setContentType("image/jpeg");
-            try {
-                response.getOutputStream().write(vesselTotal.getPicture());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+//    @GetMapping("/api/get-image/{id}")
+//    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
+//        VesselTotal vesselTotal = vesselTotalService.getById(id);
+//        if (vesselTotal != null && vesselTotal.getPicture() != null) {
+//            response.setContentType("image/jpeg");
+//            try {
+//                response.getOutputStream().write(vesselTotal.getPicture());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//        }
+//    }
+@GetMapping("/api/get-image/{id}")
+public void getImage(@PathVariable Integer id, HttpServletResponse response) {
+    VesselTotal vesselTotal = vesselTotalService.getById(id);
+    if (vesselTotal != null && vesselTotal.getPicture() != null) {
+        response.setContentType("image/jpeg");
+        try {
+            // 使用URLEncoder对文件名进行URL编码
+            //String encodedFileName = URLEncoder.encode(vesselTotal.getName(), "UTF-8");
+            //response.setHeader("Content-Disposition", "inline; filename=\"" + encodedFileName + "\"");
+            response.getOutputStream().write(vesselTotal.getPicture());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    } else {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
+}
+    // 添加图片
+    @ResponseBody
+    @PostMapping("/api/add")
+//    public Result addImage(@RequestParam("file") MultipartFile file,
+//                                           @RequestParam("name") String name,
+//                                           @RequestParam("discription") String discription) {
+//
+//        if (file.isEmpty()) {
+//            return Result.fail();
+//        }
+//
+//        try {
+//            VesselTotal vesselTotal = new VesselTotal();
+//            vesselTotal.setName(name);
+//            vesselTotal.setDiscription(discription);
+//            vesselTotal.setPicture(file.getBytes());
+//
+//            boolean saved = vesselTotalService.save(vesselTotal);
+//            if (saved) {
+//                return Result.success(vesselTotal.getId()); // 返回保存的实体ID
+//            } else {
+//                return Result.fail();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Result.fail();
+//        }
+//    }
+    public Object upload(@RequestParam("file") MultipartFile file){
+    String fileName= UUID.randomUUID()+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+    File savefile=new File("E:\\Baijiu_Back\\src\\resources\\upload"+fileName);
+    try {
+        file.transferTo(savefile);
+        return "上传成功";
+    }catch (IOException e){
+        e.printStackTrace();
+    }
+    return "上传失败";
+    }
+
+
+
+
+    // 获取所有图片
+//    @GetMapping("/")
+//    public ResponseEntity<Iterable<VesselTotal>> getAllImages() {
+//        Iterable<VesselTotal> images = vesselTotalService.findAll();
+//        return new ResponseEntity<>(images, HttpStatus.OK);
+//    }
+
+
+//    // 根据ID获取图片
+//    @GetMapping("/{id}")
+//    public ResponseEntity<VesselTotal> getImageById(@PathVariable Long id) {
+//        return vesselTotalService.findById(id)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+// 更新图片
+@PostMapping("/api/update/{id}")
+public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestParam("file") MultipartFile file,
+                                          @RequestParam("name") String name,
+                                          @RequestParam("discription") String discription) throws IOException {
+    if (file.isEmpty()) {
+        return ResponseEntity.badRequest().body(Result.fail());
+    }
+
+    VesselTotal vesselTotal = vesselTotalService.getById(id);
+    if (vesselTotal != null) {
+        vesselTotal.setName(name);
+        vesselTotal.setDiscription(discription);
+        vesselTotal.setPicture(file.getBytes());
+
+        if (vesselTotalService.updateById(vesselTotal)) {
+            String imageUrl = "http://localhost:9000/vesselTotal/api/get-image/" + id;
+            return ResponseEntity.ok(Result.success(imageUrl));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.fail());
+        }
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Result.fail());
+    }
+}
+
+
+
+
     //列表
     @GetMapping("/api/list")
     public List<VesselTotal> list() {
@@ -58,7 +174,6 @@ public class VesselTotalController {
         List list=vesselTotalService.lambdaQuery().eq(VesselTotal::getName,name).list();
         return list.size()>0?Result.success():Result.fail();
     }
-
 
     //新增
     @PostMapping("/api/save")

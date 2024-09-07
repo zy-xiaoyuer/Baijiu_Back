@@ -1,8 +1,6 @@
 package com.baijiu.Baijiu_Back.service.Impl;
 
-import com.baijiu.Baijiu_Back.entity.Users;
 import com.baijiu.Baijiu_Back.entity.VesselTotal;
-import com.baijiu.Baijiu_Back.mapper.UsersMapper;
 import com.baijiu.Baijiu_Back.mapper.VesselTotalMapper;
 import com.baijiu.Baijiu_Back.service.VesselTotalService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -44,5 +42,7 @@ public class VesselTotalServiceImpl extends ServiceImpl<VesselTotalMapper, Vesse
     public IPage pageCC(IPage<VesselTotal> page, Wrapper wrapper) {
         return vesselTotalMapper.pageCC(page, wrapper);
     }
+
+
 
 }

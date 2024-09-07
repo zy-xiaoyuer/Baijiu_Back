@@ -29,12 +29,6 @@ public class GlobalSearchController {
         List<Vessel> vessels = vesselSearchService.search(keyword);
         results.addAll(vessels);
 
-        // 搜索酒诗（假设存在）
-//        List<Poemsbydynasty> poems = poemsbydynastySearchService.search(keyword);
-//        results.addAll(poems);
-
-        // 可以继续添加其他实体的搜索
-
         return Result.success(results);
     }
 
