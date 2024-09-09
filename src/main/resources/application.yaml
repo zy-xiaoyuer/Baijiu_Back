@@ -8,7 +8,7 @@ spring:
     name: BaijiuBack
   servlet:
     multipart:
-      location: /tmp/multipart
+      location: E:\Baijiu_Back\src\main\resources\upload\
       max-file-size: 128MB
       max-request-size: 128MB
   # 数据源

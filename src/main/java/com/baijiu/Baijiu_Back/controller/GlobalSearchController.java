@@ -1,13 +1,13 @@
 package com.baijiu.Baijiu_Back.controller;
 
 import com.baijiu.Baijiu_Back.common.Result;
+import com.baijiu.Baijiu_Back.entity.Poemimages;
+import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
+import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
 import com.baijiu.Baijiu_Back.entity.Vessel;
-import com.baijiu.Baijiu_Back.service.VesselSearchService;
+import com.baijiu.Baijiu_Back.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +18,13 @@ public class GlobalSearchController {
 
     @Autowired
     private VesselSearchService vesselSearchService;
+    private PoemsbydynastySearchService poemsbydynastySearchService;
+    private PoembylocationSearchService poembylocationSearchService;
+    private PoemimagesSearchService poemimagesSearchService;
+
 
     @PostMapping("/api/global")
-    public Result globalSearch(@RequestBody SearchParam searchParam) {
+    public Result globalSearch(@RequestParam("searchQuery") SearchParam searchParam) {
         String keyword = searchParam.getKeyword();
 
         List<Object> results = new ArrayList<>();
@@ -29,10 +33,20 @@ public class GlobalSearchController {
         List<Vessel> vessels = vesselSearchService.search(keyword);
         results.addAll(vessels);
 
+        //搜索酒诗
+        List<Poemsbydynasty> poemsbydynasties = poemsbydynastySearchService.search(keyword);
+        results.addAll(poemsbydynasties);
+
+        List<Poemsbylocation> poemsbylocations = poembylocationSearchService.search(keyword);
+        results.addAll(poemsbylocations);
+
+        //搜索酒画
+        List<Poemimages> poemimages = poemimagesSearchService.search(keyword);
+        results.addAll(poemimages);
+
         return Result.success(results);
     }
 
-    // 定义一个简单的请求参数类
     public static class SearchParam {
         private String keyword;
 

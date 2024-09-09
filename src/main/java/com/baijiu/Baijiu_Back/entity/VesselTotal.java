@@ -26,7 +26,6 @@ public class VesselTotal implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String vessel;
 
     private String name;
 
