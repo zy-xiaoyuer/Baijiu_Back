@@ -115,21 +115,7 @@ public void getImage(@PathVariable Integer id, HttpServletResponse response) {
 
 
 
-    // 获取所有图片
-//    @GetMapping("/")
-//    public ResponseEntity<Iterable<VesselTotal>> getAllImages() {
-//        Iterable<VesselTotal> images = vesselTotalService.findAll();
-//        return new ResponseEntity<>(images, HttpStatus.OK);
-//    }
 
-
-//    // 根据ID获取图片
-//    @GetMapping("/{id}")
-//    public ResponseEntity<VesselTotal> getImageById(@PathVariable Long id) {
-//        return vesselTotalService.findById(id)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
 // 更新图片
 @PostMapping("/api/update/{id}")
 public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestParam("file") MultipartFile file,
@@ -175,9 +161,7 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody VesselTotal vesselTotal){
-        //调用service实现新增用户
         return vesselTotalService.save(vesselTotal)?Result.success():Result.fail();
-
     }
 
     //修改
@@ -200,11 +184,11 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
 
         Page<VesselTotal> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
         LambdaQueryWrapper<VesselTotal> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(name)) { // 使用 StringUtils 来检查字符串是否不为空或全为空格
+        if (StringUtils.hasText(name)) {
             queryWrapper.like(VesselTotal::getName, name);
-            System.out.println("Applying LIKE condition for username: " + name); // 调试输出
+            System.out.println("Applying LIKE condition for username: " + name);
         }
-        System.out.println(queryWrapper.toString()); // 打印出queryWrapper的内容，以便调试
+        System.out.println(queryWrapper.toString());
         IPage<VesselTotal> result = vesselTotalService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }

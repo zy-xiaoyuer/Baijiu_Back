@@ -34,6 +34,14 @@ public class VesselTotal implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     private byte[] picture;
 
 }
