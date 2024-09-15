@@ -25,6 +25,7 @@ import java.util.List;
  * @since 2024-08-15
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/users")
 public class UsersController {
 

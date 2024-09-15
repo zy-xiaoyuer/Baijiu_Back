@@ -27,6 +27,7 @@ import java.util.List;
  * @since 2024-08-19
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/poemsbydynasty")
 public class PoemsbydynastyController {
     @Autowired

@@ -34,6 +34,7 @@ import java.util.UUID;
  * @since 2024-08-19
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/vesselTotal")
 public class VesselTotalController {
 

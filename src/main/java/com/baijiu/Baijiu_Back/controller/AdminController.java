@@ -16,14 +16,19 @@ import java.security.PublicKey;
  * @author ltt
  * @since 2024-08-15
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    @GetMapping
+    public String adminPage() {
+        return "Admin Page";
+    }
     @CrossOrigin
-    @PostMapping("/api/getUserPassword") // @RequestMapping注解创建接口
+    @PostMapping("/api/getUserPassword")
     @ResponseBody
     public Result adminLogin(@RequestBody Admin admin) {
         int count = adminService.getAdminByMassage(admin.getUsername(), admin.getPassword());

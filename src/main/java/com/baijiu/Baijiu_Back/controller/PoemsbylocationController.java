@@ -26,6 +26,7 @@ import java.util.List;
  * @since 2024-08-19
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/poemsbylocation")
 public class PoemsbylocationController {
 

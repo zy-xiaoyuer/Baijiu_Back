@@ -28,6 +28,7 @@ import java.util.List;
  * @since 2024-08-26
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/vessel")
 public class VesselController {
     @Autowired

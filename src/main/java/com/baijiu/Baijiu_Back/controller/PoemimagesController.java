@@ -30,6 +30,7 @@ import java.util.List;
  * @since 2024-08-21
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/poemimages")
 public class PoemimagesController {
     @Autowired
