@@ -2,7 +2,6 @@
 # 服务器
 server:
   port: 9000
-
 spring:
   application:
     name: BaijiuBack
