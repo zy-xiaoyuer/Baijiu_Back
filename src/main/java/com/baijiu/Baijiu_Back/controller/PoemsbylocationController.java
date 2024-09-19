@@ -38,6 +38,7 @@ public class PoemsbylocationController {
     public List<Poemsbylocation> list() {
         return poemsbylocationService.list(); // 直接返回用户列表
     }
+
     @GetMapping("/api/findByPoetry")
     public Result findByUsername(@RequestParam String poetry)
     {

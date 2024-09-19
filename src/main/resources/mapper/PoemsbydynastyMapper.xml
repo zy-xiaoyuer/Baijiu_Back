@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baijiu.Baijiu_Back.mapper.PoemsbydynastyMapper">
+    <select id="selectPage" resultType="com.baijiu.Baijiu_Back.entity.Poemsbydynasty">
+        SELECT * FROM poemsbydynasty
+        <if test="sql != null and sql.trim() != ''">
+            AND ${sql}
+        </if>
+    </select>
+
+    <select id="pageC" resultType="com.baijiu.Baijiu_Back.entity.Poemsbydynasty">
+        select *from poemsbydynasty
+    </select>
+
+    <select id="pageCC" resultType="com.baijiu.Baijiu_Back.entity.Poemsbydynasty">
+        select *from poemsbydynasty ${ew.customSqlSegment}
+    </select>
+</mapper>

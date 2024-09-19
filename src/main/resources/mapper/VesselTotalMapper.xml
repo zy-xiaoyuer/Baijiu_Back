@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baijiu.Baijiu_Back.mapper.VesselTotalMapper">
+    <select id="selectPage" resultType="com.baijiu.Baijiu_Back.entity.VesselTotal">
+        SELECT * FROM vessel_total
+        <if test="sql != null and sql.trim() != ''">
+            AND ${sql}
+        </if>
+    </select>
+
+    <select id="pageC" resultType="com.baijiu.Baijiu_Back.entity.VesselTotal">
+        select *from vessel_total
+    </select>
+
+    <select id="pageCC" resultType="com.baijiu.Baijiu_Back.entity.VesselTotal">
+        select *from vessel_total ${ew.customSqlSegment}
+    </select>
+</mapper>
