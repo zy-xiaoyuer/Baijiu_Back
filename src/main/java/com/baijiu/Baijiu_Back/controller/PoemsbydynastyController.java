@@ -82,6 +82,14 @@ public class PoemsbydynastyController {
         IPage<Poemsbydynasty> result = poemsbydynastyService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
-
+    // 根据ID获取单条诗歌数据
+    @GetMapping("/api/getPoemById")
+    public Result getPoemById(@RequestParam("id") Integer id) {
+        Poemsbydynasty poem = poemsbydynastyService.getById(id);
+        if (poem == null) {
+            return Result.fail();
+        }
+        return Result.success(poem);
+    }
 
 }

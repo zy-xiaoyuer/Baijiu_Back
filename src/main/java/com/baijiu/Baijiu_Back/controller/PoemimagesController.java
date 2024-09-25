@@ -3,6 +3,7 @@ package com.baijiu.Baijiu_Back.controller;
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Poemimages;
+import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -129,6 +130,13 @@ public class PoemimagesController {
         IPage<Poemimages> result = poemimagesService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
-
+    @GetMapping("/api/getPoemById")
+    public Result getPoemById(@RequestParam("id") Integer id) {
+        Poemimages poem = poemimagesService.getById(id);
+        if (poem == null) {
+            return Result.fail();
+        }
+        return Result.success(poem);
+    }
 
 }

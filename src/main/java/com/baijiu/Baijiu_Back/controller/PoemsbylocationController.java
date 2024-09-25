@@ -82,5 +82,13 @@ public class PoemsbylocationController {
         IPage<Poemsbylocation> result = poemsbylocationService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
+    @GetMapping("/api/getPoemById")
+    public Result getPoemById(@RequestParam("id") Integer id) {
+        Poemsbylocation poem = poemsbylocationService.getById(id);
+        if (poem == null) {
+            return Result.fail();
+        }
+        return Result.success(poem);
+    }
 
 }
