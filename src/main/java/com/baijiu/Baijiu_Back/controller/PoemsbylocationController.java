@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -90,5 +91,27 @@ public class PoemsbylocationController {
         }
         return Result.success(poem);
     }
+    //统计每个朝代的诗歌数量
+    @GetMapping("/api/countByDynasty")
+    public Result countByDynasty() {
+        List<Poemsbylocation> poems = poemsbylocationService.list();
+        Map<String, Long> dynastyCount = new HashMap<>();
+        for (Poemsbylocation poem : poems) {
+            String dynasty = poem.getDynasty();
+            dynastyCount.put(dynasty, dynastyCount.getOrDefault(dynasty, 0L) + 1);
+        }
+        return Result.success(dynastyCount);
+    }
 
+    //统计每个作者的诗歌数量
+    @GetMapping("/api/countByAuthor")
+    public Result countByAuthor() {
+        List<Poemsbylocation> poems = poemsbylocationService.list();
+        Map<String, Long> authorCount = new HashMap<>();
+        for (Poemsbylocation poem : poems) {
+            String author = poem.getAuthor();
+            authorCount.put(author, authorCount.getOrDefault(author, 0L) + 1);
+        }
+        return Result.success(authorCount);
+    }
 }

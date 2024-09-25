@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -90,6 +91,19 @@ public class PoemsbydynastyController {
             return Result.fail();
         }
         return Result.success(poem);
+    }
+    //返回朝代和作者（用于柱状图）
+    @GetMapping("/api/getPoemInfoById")
+    public Result getPoemInfoById(@RequestParam("id") Integer id) {
+        Poemsbydynasty poem = poemsbydynastyService.getById(id);
+        if (poem == null) {
+            return Result.fail();
+        }
+        Map<String, Object> poemInfo = new HashMap<>();
+        poemInfo.put("id", poem.getId());
+        poemInfo.put("dynasty", poem.getDynasty());
+        poemInfo.put("author", poem.getAuthor());
+        return Result.success(poemInfo);
     }
 
 }

@@ -2,6 +2,7 @@ package com.baijiu.Baijiu_Back.controller;
 
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
+import com.baijiu.Baijiu_Back.entity.Poemimages;
 import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Vessel;
 import com.baijiu.Baijiu_Back.entity.VesselTotal;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -93,6 +95,16 @@ public class VesselController {
         IPage<Vessel> result = vesselService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
-
+    //统计每个朝代的酒画数量
+    @GetMapping("/api/countByDynasty")
+    public Result countByDynasty() {
+        List<Vessel> vessels = vesselService.list();
+        Map<String, Long> dynastyCount = new HashMap<>();
+        for (Vessel vessel : vessels) {
+            String dynasty = vessel.getAge();
+            dynastyCount.put(dynasty, dynastyCount.getOrDefault(dynasty, 0L) + 1);
+        }
+        return Result.success(dynastyCount);
+    }
 
 }
