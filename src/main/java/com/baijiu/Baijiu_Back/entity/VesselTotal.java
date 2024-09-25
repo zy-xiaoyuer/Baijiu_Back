@@ -42,6 +42,6 @@ public class VesselTotal implements Serializable {
         this.id = id;
     }
 
-    private byte[] picture;
+    private String picture;
 
 }

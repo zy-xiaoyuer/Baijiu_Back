@@ -10,6 +10,8 @@ spring:
       location: E:\Baijiu_Back\src\main\resources\upload
       max-file-size: 128MB
       max-request-size: 128MB
+    resources:
+      static-locations: file:uploads/
   # 数据源
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -34,4 +36,5 @@ mybatis:
       initial-size: 20
       min-idle: 10
       max-active: 100
-
+file-storage:
+  base-path: /static/

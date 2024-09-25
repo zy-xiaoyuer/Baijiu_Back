@@ -6,12 +6,16 @@ import com.baijiu.Baijiu_Back.service.VesselTotalService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.util.Base64;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,18 +27,35 @@ public class CommonController {
 
     @Autowired
     private VesselTotalService vesselTotalService;
+    @Value("${file-storage.base-path}") String basePath;
     @PostMapping("/save")
-    public ResponseEntity<?> save(VesselTotal vesselTotal,@RequestParam( value="picture",required=false)MultipartFile file)throws Exception {
+    public ResponseEntity<?> save(VesselTotal vesselTotal,@RequestParam( value="picture",required=false)String filename)throws Exception {
 
-        if (file != null && !file.isEmpty()) {
-            byte[] fileBytes = file.getBytes();
-            vesselTotal.setPicture(fileBytes);
+        if (filename.isEmpty()) {
+            return ResponseEntity.badRequest().body("文件不能为空");
+        }
+       // String fileName = file.getOriginalFilename();
+
+        String filePath = basePath + filename;  // 组合成完整的文件路径
+
+        File dest = new File(filePath);
+        if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("创建目录失败");
+        }
+
+        File destFile = new File(dest, filename);
+
+        try {
+            //file.transferTo(destFile);
+            vesselTotal.setPicture(filePath);
             vesselTotalService.save(vesselTotal);
-            // 将图片转换为 Base64 编码
-            String base64Image = Base64.getEncoder().encodeToString(fileBytes);
-            return ResponseEntity.ok(base64Image);
-        } else {
-            return  ResponseEntity.badRequest().body("文件不能为空");
+
+            // 返回响应时设置 Content-Type 和编码
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            return new ResponseEntity<>(filePath, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("文件上传失败");
         }
     }
 
@@ -42,13 +63,17 @@ public class CommonController {
     @GetMapping("/download/{id}")
     public ResponseEntity<?> download(@PathVariable("id") Integer id) {
         VesselTotal vesselTotal = vesselTotalService.getById(id);
-            String baseimg = Base64.getEncoder().encodeToString(vesselTotal.getPicture());
-            System.out.println(baseimg);
+            String imgurl = vesselTotal.getPicture();
+//            System.out.println(baseimg);
 
-            Map<Integer, String> res = new HashMap<>();
-            res.put(id,baseimg);
+        Map<Integer, String> res = new HashMap<>();
+        res.put(id,imgurl);
+       // 返回响应时设置 Content-Type 和编码
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return  new ResponseEntity<>(
+                res, headers, HttpStatus.OK);
 
-        return ResponseEntity.ok()
-                .body(res);
+
     }
 }

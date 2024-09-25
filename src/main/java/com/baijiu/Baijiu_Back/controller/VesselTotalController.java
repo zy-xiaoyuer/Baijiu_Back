@@ -59,19 +59,19 @@ public class VesselTotalController {
 @GetMapping("/api/get-image/{id}")
 public void getImage(@PathVariable Integer id, HttpServletResponse response) {
     VesselTotal vesselTotal = vesselTotalService.getById(id);
-    if (vesselTotal != null && vesselTotal.getPicture() != null) {
-        response.setContentType("image/jpeg");
-        try {
-            // 使用URLEncoder对文件名进行URL编码
-            //String encodedFileName = URLEncoder.encode(vesselTotal.getName(), "UTF-8");
-            //response.setHeader("Content-Disposition", "inline; filename=\"" + encodedFileName + "\"");
-            response.getOutputStream().write(vesselTotal.getPicture());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    } else {
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    }
+//    if (vesselTotal != null && vesselTotal.getPicture() != null) {
+//        response.setContentType("image/jpeg");
+//        try {
+//            // 使用URLEncoder对文件名进行URL编码
+//            //String encodedFileName = URLEncoder.encode(vesselTotal.getName(), "UTF-8");
+//            //response.setHeader("Content-Disposition", "inline; filename=\"" + encodedFileName + "\"");
+//            //response.getOutputStream().write(vesselTotal.getPicture());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    } else {
+//        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//    }
 }
     // 添加图片
     @ResponseBody
@@ -130,7 +130,7 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
     if (vesselTotal != null) {
         vesselTotal.setName(name);
         vesselTotal.setDiscription(discription);
-        vesselTotal.setPicture(file.getBytes());
+        //vesselTotal.setPicture(file.getBytes());
 
         if (vesselTotalService.updateById(vesselTotal)) {
             String imageUrl = "http://localhost:9000/vesselTotal/api/get-image/" + id;
