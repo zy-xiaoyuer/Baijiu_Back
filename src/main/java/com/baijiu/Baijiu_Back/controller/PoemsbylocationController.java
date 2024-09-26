@@ -66,7 +66,7 @@ public class PoemsbylocationController {
         return poemsbylocationService.removeById(id) ? Result.success() : Result.fail();
     }
 
-    // 分页查询（按作者或朝代精确查询）
+    // 分页查询（按作者、诗名或朝代精确查询）
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap params = queryPageParam.getParam();
@@ -77,6 +77,7 @@ public class PoemsbylocationController {
         if (StringUtils.hasText(search)) {
             queryWrapper.and(w ->
                     w.eq(Poemsbylocation::getAuthor, search).or().eq(Poemsbylocation::getDynasty, search)
+                            .or().eq(Poemsbylocation::getFullName,search)
             );
         }
         //System.out.println(queryWrapper.toString());
