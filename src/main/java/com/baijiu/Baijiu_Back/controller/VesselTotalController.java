@@ -1,6 +1,7 @@
 package com.baijiu.Baijiu_Back.controller;
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
+import com.baijiu.Baijiu_Back.entity.Vessel;
 import com.baijiu.Baijiu_Back.entity.VesselTotal;
 
 import com.baijiu.Baijiu_Back.service.VesselTotalService;
@@ -8,21 +9,24 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -40,9 +44,12 @@ public class VesselTotalController {
 
     @Autowired
     private VesselTotalService vesselTotalService;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
 
-//    @GetMapping("/api/get-image/{id}")
+
+    //    @GetMapping("/api/get-image/{id}")
 //    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
 //        VesselTotal vesselTotal = vesselTotalService.getById(id);
 //        if (vesselTotal != null && vesselTotal.getPicture() != null) {
@@ -143,9 +150,34 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
     }
 }
 
+    @PostMapping("/api/saveall")
+    public Result save(@RequestPart("name") String name,
+                       @RequestPart("discription") String discription,
+                       @RequestPart("picture") MultipartFile pictureFile) {
+        try {
+            if (pictureFile.isEmpty()) {
+                return Result.fail();
+            }
 
+            String fileName = pictureFile.getOriginalFilename();
+            byte[] bytes = pictureFile.getBytes();
+            Path path = Paths.get(uploadDir,  fileName);
 
+            Files.write(path, bytes);
 
+            // 保存文件名到数据库
+            VesselTotal vesselTotal = new VesselTotal();
+            vesselTotal.setName(name);
+            vesselTotal.setDiscription(discription);
+            vesselTotal.setPicture("src\\main\\resources" + fileName); // 注意路径前缀
+
+            vesselTotalService.save(vesselTotal);
+            return Result.success("/" + fileName); // 返回文件名
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail();
+        }
+    }
     //列表
     @GetMapping("/api/list")
     public List<VesselTotal> list() {
@@ -193,6 +225,13 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
         IPage<VesselTotal> result = vesselTotalService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
-
+    @GetMapping("/api/getPoemById")
+    public Result getPoemById(@RequestParam("id") Integer id) {
+        VesselTotal vessel = vesselTotalService.getById(id);
+        if (vessel == null) {
+            return Result.fail();
+        }
+        return Result.success(vessel);
+    }
 
 }

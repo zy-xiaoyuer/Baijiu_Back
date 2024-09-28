@@ -106,5 +106,12 @@ public class VesselController {
         }
         return Result.success(dynastyCount);
     }
-
+    @GetMapping("/api/getPoemById")
+    public Result getPoemById(@RequestParam("id") Integer id) {
+        Vessel vessel = vesselService.getById(id);
+        if (vessel == null) {
+            return Result.fail();
+        }
+        return Result.success(vessel);
+    }
 }

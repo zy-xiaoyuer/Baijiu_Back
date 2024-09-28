@@ -2,6 +2,7 @@ package com.baijiu.Baijiu_Back.utils;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
@@ -20,6 +21,12 @@ public class WebConfig implements WebMvcConfigurer { // 继承跨域请求的类
                 .exposedHeaders("*")
         ; // 允许携带信息
 
+    }
+    //静态资源图片的路径
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("classpath:/upload/");
     }
 }
 

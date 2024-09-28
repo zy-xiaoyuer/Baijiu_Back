@@ -27,37 +27,37 @@ public class CommonController {
 
     @Autowired
     private VesselTotalService vesselTotalService;
-    @Value("${file-storage.base-path}") String basePath;
+   // @Value("${file-storage.base-path}") String basePath;
     @PostMapping("/save")
-    public ResponseEntity<?> save(VesselTotal vesselTotal,@RequestParam( value="picture",required=false)String filename)throws Exception {
-
-        if (filename.isEmpty()) {
-            return ResponseEntity.badRequest().body("文件不能为空");
-        }
-       // String fileName = file.getOriginalFilename();
-
-        String filePath = basePath + filename;  // 组合成完整的文件路径
-
-        File dest = new File(filePath);
-        if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("创建目录失败");
-        }
-
-        File destFile = new File(dest, filename);
-
-        try {
-            //file.transferTo(destFile);
-            vesselTotal.setPicture(filePath);
-            vesselTotalService.save(vesselTotal);
-
-            // 返回响应时设置 Content-Type 和编码
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-            return new ResponseEntity<>(filePath, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("文件上传失败");
-        }
-    }
+//    public ResponseEntity<?> save(VesselTotal vesselTotal,@RequestParam( value="picture",required=false)String filename)throws Exception {
+//
+//        if (filename.isEmpty()) {
+//            return ResponseEntity.badRequest().body("文件不能为空");
+//        }
+//       // String fileName = file.getOriginalFilename();
+//
+//        //String filePath = basePath + filename;  // 组合成完整的文件路径
+//
+//       // File dest = new File(filePath);
+//        //if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("创建目录失败");
+//        }
+//
+//        File destFile = new File(dest, filename);
+//
+//        try {
+//            //file.transferTo(destFile);
+//            vesselTotal.setPicture(filePath);
+//            vesselTotalService.save(vesselTotal);
+//
+//            // 返回响应时设置 Content-Type 和编码
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//            return new ResponseEntity<>(filePath, headers, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("文件上传失败");
+//        }
+//    }
 
 
     @GetMapping("/download/{id}")
