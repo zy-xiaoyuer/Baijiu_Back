@@ -13,10 +13,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,22 +40,24 @@ import java.util.Map;
 public class VesselController {
     @Autowired
     private VesselService vesselService;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
-    @GetMapping("/api/get-image/{id}")
-    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-        Vessel vessel = vesselService.getById(id);
-        if (vessel != null && vessel.getPicture() != null) {
-
-            response.setContentType("image/jpeg");
-            try {
-                response.getOutputStream().write(vessel.getPicture());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
+//    @GetMapping("/api/get-image/{id}")
+//    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
+//        Vessel vessel = vesselService.getById(id);
+//        if (vessel != null && vessel.getPicture() != null) {
+//
+//            response.setContentType("image/jpeg");
+//            try {
+//                response.getOutputStream().write(vessel.getPicture());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//        }
+//    }
     //列表
     @GetMapping("/api/list")
     public List<Vessel> list() {
@@ -113,5 +120,33 @@ public class VesselController {
             return Result.fail();
         }
         return Result.success(vessel);
+    }
+    @PostMapping("/api/saveall")
+    public Result save(@RequestPart("age") String age,
+                       @RequestPart("now") String now,
+                       @RequestPart("picture") MultipartFile pictureFile) {
+        try {
+            if (pictureFile.isEmpty()) {
+                return Result.fail();
+            }
+
+            String fileName = pictureFile.getOriginalFilename();
+            byte[] bytes = pictureFile.getBytes();
+            Path path = Paths.get(uploadDir,  fileName);
+
+            Files.write(path, bytes);
+
+            // 保存文件名到数据库
+            Vessel vessel = new Vessel();
+            vessel.setAge(age);
+            vessel.setNow(now);
+            vessel.setPicture("src\\main\\resources\\upload" + fileName); // 注意路径前缀
+
+            vesselService.save(vessel);
+            return Result.success("/" + fileName); // 返回文件名
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail();
+        }
     }
 }

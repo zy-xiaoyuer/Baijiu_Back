@@ -28,7 +28,7 @@ public class Poemimages implements Serializable {
 
     private String imagename;
 
-    private byte[] image;
+    private String image;
 
     private String dynasty;
 }

@@ -48,66 +48,6 @@ public class VesselTotalController {
     private String uploadDir;
 
 
-
-    //    @GetMapping("/api/get-image/{id}")
-//    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-//        VesselTotal vesselTotal = vesselTotalService.getById(id);
-//        if (vesselTotal != null && vesselTotal.getPicture() != null) {
-//            response.setContentType("image/jpeg");
-//            try {
-//                response.getOutputStream().write(vesselTotal.getPicture());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//        }
-//    }
-@GetMapping("/api/get-image/{id}")
-public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-    VesselTotal vesselTotal = vesselTotalService.getById(id);
-//    if (vesselTotal != null && vesselTotal.getPicture() != null) {
-//        response.setContentType("image/jpeg");
-//        try {
-//            // 使用URLEncoder对文件名进行URL编码
-//            //String encodedFileName = URLEncoder.encode(vesselTotal.getName(), "UTF-8");
-//            //response.setHeader("Content-Disposition", "inline; filename=\"" + encodedFileName + "\"");
-//            //response.getOutputStream().write(vesselTotal.getPicture());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    } else {
-//        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//    }
-}
-    // 添加图片
-    @ResponseBody
-    @PostMapping("/api/add")
-//    public Result addImage(@RequestParam("file") MultipartFile file,
-//                                           @RequestParam("name") String name,
-//                                           @RequestParam("discription") String discription) {
-//
-//        if (file.isEmpty()) {
-//            return Result.fail();
-//        }
-//
-//        try {
-//            VesselTotal vesselTotal = new VesselTotal();
-//            vesselTotal.setName(name);
-//            vesselTotal.setDiscription(discription);
-//            vesselTotal.setPicture(file.getBytes());
-//
-//            boolean saved = vesselTotalService.save(vesselTotal);
-//            if (saved) {
-//                return Result.success(vesselTotal.getId()); // 返回保存的实体ID
-//            } else {
-//                return Result.fail();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Result.fail();
-//        }
-//    }
     public Object upload(@RequestParam("file") MultipartFile file){
     String fileName= UUID.randomUUID()+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
     File savefile=new File("E:\\Baijiu_Back\\src\\resources\\upload"+fileName);
@@ -119,9 +59,6 @@ public void getImage(@PathVariable Integer id, HttpServletResponse response) {
     }
     return "上传失败";
     }
-
-
-
 
 
 // 更新图片

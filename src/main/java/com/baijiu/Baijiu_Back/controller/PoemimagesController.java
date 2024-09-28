@@ -5,6 +5,8 @@ import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Poemimages;
 import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
+import com.baijiu.Baijiu_Back.entity.Vessel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,64 +43,40 @@ import java.util.Map;
 public class PoemimagesController {
     @Autowired
     private PoemimagesService poemimagesService;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
-    @PostMapping("/api/upload")
-    public ResponseEntity<Result> uploadImage(@RequestParam("image") MultipartFile file) {
-        try {
-            if (file.isEmpty()) {
-                return ResponseEntity.badRequest().body(Result.fail());
-            }
-            byte[] fileBytes = file.getBytes(); // 获取文件字节数据
 
-            Poemimages poemimages = new Poemimages();
-            poemimages.setImage(fileBytes); // 假设image是byte[]类型
-            poemimages.setImagename(file.getOriginalFilename()); // 设置图片名称
-            boolean saved = poemimagesService.save(poemimages); // 保存到数据库
-            if (saved) {
-                return ResponseEntity.ok(Result.success("图片上传成功"));
-            } else {
-                return ResponseEntity.internalServerError().body(Result.fail());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(Result.fail());
-        }
-    }
     @GetMapping("/api/findByPictureName")
     public Result findByUsername(@RequestParam String imagename)
     {
         List list=poemimagesService.lambdaQuery().eq(Poemimages::getImagename,imagename).list();
         return list.size()>0?Result.success():Result.fail();
     }
-    @GetMapping("/api/get-image/{id}")
-    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-        Poemimages poemimages = poemimagesService.getById(id);
-        if (poemimages != null && poemimages.getImage() != null) {
-            // 设置响应的类型为图片类型
-            response.setContentType("image/jpeg");
-            // 将图片的字节数据写入响应输出流
-            try {
-                response.getOutputStream().write(poemimages.getImage());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // 如果没有找到图片，返回错误或者默认图片
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
+//    @GetMapping("/api/get-image/{id}")
+//    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
+//        Poemimages poemimages = poemimagesService.getById(id);
+//        if (poemimages != null && poemimages.getImage() != null) {
+//            // 设置响应的类型为图片类型
+//            response.setContentType("image/jpeg");
+//            // 将图片的字节数据写入响应输出流
+//            try {
+//                response.getOutputStream().write(poemimages.getImage());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            // 如果没有找到图片，返回错误或者默认图片
+//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//        }
+//    }
     //列表
     @GetMapping("/api/list")
     public List<Poemimages> list() {
         return poemimagesService.list(); // 直接返回用户列表
     }
 
-    //    @GetMapping("/api/findByUsername")
-//    public Result findByUsername(@RequestParam String username)
-//    {
-//        List list=vesselTotalService.lambdaQuery().eq(Users::getUsername,username).list();
-//        return list.size()>0?Result.success():Result.fail();
-//    }
+
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody Poemimages poemimages){
@@ -151,5 +132,31 @@ public class PoemimagesController {
         }
         return Result.success(dynastyCount);
     }
+    @PostMapping("/api/saveall")
+    public Result save(@RequestPart("imagename") String imagename,
+                       @RequestPart("image") MultipartFile pictureFile) {
+        try {
+            if (pictureFile.isEmpty()) {
+                return Result.fail();
+            }
 
+            String fileName = pictureFile.getOriginalFilename();
+            byte[] bytes = pictureFile.getBytes();
+            Path path = Paths.get(uploadDir,  fileName);
+
+            Files.write(path, bytes);
+
+            // 保存文件名到数据库
+            Poemimages poemimages = new Poemimages();
+            poemimages.setImagename(imagename);
+
+            poemimages.setImage("src\\main\\resources\\upload" + fileName); // 注意路径前缀
+
+            poemimagesService.save(poemimages);
+            return Result.success("/" + fileName); // 返回文件名
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail();
+        }
+    }
 }

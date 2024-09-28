@@ -30,5 +30,5 @@ public class Vessel implements Serializable {
 
     private String now;
 
-    private byte[] picture;
+    private String picture;
 }
