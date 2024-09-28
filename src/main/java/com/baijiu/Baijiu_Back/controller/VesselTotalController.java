@@ -169,7 +169,7 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
             VesselTotal vesselTotal = new VesselTotal();
             vesselTotal.setName(name);
             vesselTotal.setDiscription(discription);
-            vesselTotal.setPicture("src\\main\\resources" + fileName); // 注意路径前缀
+            vesselTotal.setPicture("src\\main\\resources\\upload" + fileName); // 注意路径前缀
 
             vesselTotalService.save(vesselTotal);
             return Result.success("/" + fileName); // 返回文件名
