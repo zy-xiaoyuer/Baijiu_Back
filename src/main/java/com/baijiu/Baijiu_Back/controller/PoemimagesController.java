@@ -150,7 +150,7 @@ public class PoemimagesController {
             Poemimages poemimages = new Poemimages();
             poemimages.setImagename(imagename);
 
-            poemimages.setImage("src\\main\\resources\\upload" + fileName); // 注意路径前缀
+            poemimages.setImage("src\\\\main\\\\resources\\\\upload\\\\" + fileName); // 注意路径前缀
 
             poemimagesService.save(poemimages);
             return Result.success("/" + fileName); // 返回文件名

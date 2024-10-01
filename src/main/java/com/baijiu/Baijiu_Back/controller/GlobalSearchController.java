@@ -19,14 +19,17 @@ public class GlobalSearchController {
 
     @Autowired
     private VesselSearchService vesselSearchService;
+    @Autowired
     private PoemsbydynastySearchService poemsbydynastySearchService;
+    @Autowired
     private PoembylocationSearchService poembylocationSearchService;
+    @Autowired
     private PoemimagesSearchService poemimagesSearchService;
 
 
     @PostMapping("/api/global")
-    public Result globalSearch(@RequestParam("searchQuery") SearchParam searchParam) {
-        String keyword = searchParam.getKeyword();
+    public Result globalSearch(@RequestParam("searchQuery") String searchQuery) {
+        String keyword = searchQuery;
 
         List<Object> results = new ArrayList<>();
 
@@ -48,15 +51,5 @@ public class GlobalSearchController {
         return Result.success(results);
     }
 
-    public static class SearchParam {
-        private String keyword;
-
-        public String getKeyword() {
-            return keyword;
-        }
-        public void setKeyword(String keyword) {
-            this.keyword = keyword;
-        }
-    }
 }
 //在前端添加一个输入字段，使用axios获取到接口

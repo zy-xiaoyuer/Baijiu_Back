@@ -106,7 +106,7 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
             VesselTotal vesselTotal = new VesselTotal();
             vesselTotal.setName(name);
             vesselTotal.setDiscription(discription);
-            vesselTotal.setPicture("src\\main\\resources\\upload" + fileName); // 注意路径前缀
+            vesselTotal.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName); // 注意路径前缀
 
             vesselTotalService.save(vesselTotal);
             return Result.success("/" + fileName); // 返回文件名
@@ -155,7 +155,7 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
         Page<VesselTotal> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
         LambdaQueryWrapper<VesselTotal> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(name)) {
-            queryWrapper.like(VesselTotal::getName, name);
+            queryWrapper.eq(VesselTotal::getName, name);
             System.out.println("Applying LIKE condition for username: " + name);
         }
         System.out.println(queryWrapper.toString());

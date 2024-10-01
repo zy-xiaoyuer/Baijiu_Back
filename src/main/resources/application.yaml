@@ -15,6 +15,7 @@ spring:
     url: jdbc:mysql://localhost:3306/baijiu?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
     username: root
     password: 025626Ltt@
+
 # 配置MyBatis Plus
 mybatis-plus:
   configuration:

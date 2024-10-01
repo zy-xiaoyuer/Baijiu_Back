@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -140,8 +141,7 @@ public class VesselController {
             Vessel vessel = new Vessel();
             vessel.setAge(age);
             vessel.setNow(now);
-            vessel.setPicture("src\\main\\resources\\upload" + fileName); // 注意路径前缀
-
+            vessel.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
             vesselService.save(vessel);
             return Result.success("/" + fileName); // 返回文件名
         } catch (IOException e) {
