@@ -8,8 +8,6 @@ import com.baijiu.Baijiu_Back.service.VesselTotalService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -162,6 +160,7 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
         IPage<VesselTotal> result = vesselTotalService.page(page, queryWrapper);
         return Result.success(result.getRecords(), result.getTotal());
     }
+    //传id
     @GetMapping("/api/getPoemById")
     public Result getPoemById(@RequestParam("id") Integer id) {
         VesselTotal vessel = vesselTotalService.getById(id);
@@ -169,6 +168,20 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
             return Result.fail();
         }
         return Result.success(vessel);
+    }
+//不传id就打印全部结果，传id打印筛选后的结果
+    @GetMapping("/api/getPoemByIdsearch")
+    public Result getPoemByIdsearch(@RequestParam(value = "id", required = false) Integer id) {
+        if (id != null) {
+            VesselTotal vessel = vesselTotalService.getById(id);
+            if (vessel == null) {
+                return Result.fail();
+            }
+            return Result.success(vessel);
+        } else {
+            List<VesselTotal> vessels = vesselTotalService.list();
+            return Result.success(vessels);
+        }
     }
 
 }

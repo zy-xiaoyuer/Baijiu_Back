@@ -122,6 +122,20 @@ public class VesselController {
         }
         return Result.success(vessel);
     }
+    //不传id就打印全部结果，传id打印筛选后的结果
+    @GetMapping("/api/getPoemByIdsearch")
+    public Result getPoemByIdsearch(@RequestParam(value = "id", required = false) Integer id) {
+        if (id != null) {
+            Vessel vessel = vesselService.getById(id);
+            if (vessel == null) {
+                return Result.fail();
+            }
+            return Result.success(vessel);
+        } else {
+            List<Vessel> vessels =vesselService.list();
+            return Result.success(vessels);
+        }
+    }
     @PostMapping("/api/saveall")
     public Result save(@RequestPart("age") String age,
                        @RequestPart("now") String now,

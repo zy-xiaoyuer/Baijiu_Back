@@ -2,10 +2,7 @@ package com.baijiu.Baijiu_Back.controller;
 
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
-import com.baijiu.Baijiu_Back.entity.Poemimages;
-import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
-import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
-import com.baijiu.Baijiu_Back.entity.Vessel;
+import com.baijiu.Baijiu_Back.entity.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -120,6 +117,20 @@ public class PoemimagesController {
             return Result.fail();
         }
         return Result.success(poem);
+    }
+    //不传id就打印全部结果，传id打印筛选后的结果
+    @GetMapping("/api/getPoemByIdsearch")
+    public Result getPoemByIdsearch(@RequestParam(value = "id", required = false) Integer id) {
+        if (id != null) {
+            Poemimages poemimages = poemimagesService.getById(id);
+            if (poemimages == null) {
+                return Result.fail();
+            }
+            return Result.success(poemimages);
+        } else {
+            List<Poemimages> poemimagess = poemimagesService.list();
+            return Result.success(poemimagess);
+        }
     }
     //统计每个朝代的酒画数量
     @GetMapping("/api/countByDynasty")

@@ -92,6 +92,20 @@ public class PoemsbydynastyController {
         }
         return Result.success(poem);
     }
+    //不传id就打印全部结果，传id打印筛选后的结果
+    @GetMapping("/api/getPoemByIdsearch")
+    public Result getPoemByIdsearch(@RequestParam(value = "id", required = false) Integer id) {
+        if (id != null) {
+            Poemsbydynasty poemsbydynasty = poemsbydynastyService.getById(id);
+            if (poemsbydynasty == null) {
+                return Result.fail();
+            }
+            return Result.success(poemsbydynasty);
+        } else {
+            List<Poemsbydynasty> poemsbydynasties = poemsbydynastyService.list();
+            return Result.success(poemsbydynasties);
+        }
+    }
     //返回朝代和作者（用于柱状图）
     @GetMapping("/api/getPoemInfoById")
     public Result getPoemInfoById(@RequestParam("id") Integer id) {

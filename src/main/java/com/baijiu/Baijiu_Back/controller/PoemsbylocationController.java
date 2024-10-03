@@ -5,6 +5,7 @@ import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
 import com.baijiu.Baijiu_Back.entity.Users;
+import com.baijiu.Baijiu_Back.entity.VesselTotal;
 import com.baijiu.Baijiu_Back.service.PoemsbylocationService;
 import com.baijiu.Baijiu_Back.service.UsersService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -91,6 +92,20 @@ public class PoemsbylocationController {
             return Result.fail();
         }
         return Result.success(poem);
+    }
+    //不传id就打印全部结果，传id打印筛选后的结果
+    @GetMapping("/api/getPoemByIdsearch")
+    public Result getPoemByIdsearch(@RequestParam(value = "id", required = false) Integer id) {
+        if (id != null) {
+           Poemsbylocation poemsbylocation = poemsbylocationService.getById(id);
+            if (poemsbylocation == null) {
+                return Result.fail();
+            }
+            return Result.success(poemsbylocation);
+        } else {
+            List<Poemsbylocation> poemsbylocations = poemsbylocationService.list();
+            return Result.success(poemsbylocations);
+        }
     }
     //统计每个朝代的诗歌数量
     @GetMapping("/api/countByDynasty")
