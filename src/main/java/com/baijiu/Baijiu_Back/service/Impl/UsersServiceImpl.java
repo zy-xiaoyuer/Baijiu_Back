@@ -48,6 +48,10 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         return usersMapper.pageCC(page, wrapper);
     }
 
+    @Override
+    public Long countAll() {
+        return usersMapper.selectCount(null);
+    }
 
 
 }

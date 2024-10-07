@@ -46,45 +46,6 @@ public class VesselTotalController {
     private String uploadDir;
 
 
-    public Object upload(@RequestParam("file") MultipartFile file){
-    String fileName= UUID.randomUUID()+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-    File savefile=new File("E:\\Baijiu_Back\\src\\resources\\upload"+fileName);
-    try {
-        file.transferTo(savefile);
-        return "上传成功";
-    }catch (IOException e){
-        e.printStackTrace();
-    }
-    return "上传失败";
-    }
-
-
-// 更新图片
-@PostMapping("/api/update/{id}")
-public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestParam("file") MultipartFile file,
-                                          @RequestParam("name") String name,
-                                          @RequestParam("discription") String discription) throws IOException {
-    if (file.isEmpty()) {
-        return ResponseEntity.badRequest().body(Result.fail());
-    }
-
-    VesselTotal vesselTotal = vesselTotalService.getById(id);
-    if (vesselTotal != null) {
-        vesselTotal.setName(name);
-        vesselTotal.setDiscription(discription);
-        //vesselTotal.setPicture(file.getBytes());
-
-        if (vesselTotalService.updateById(vesselTotal)) {
-            String imageUrl = "http://localhost:9000/vesselTotal/api/get-image/" + id;
-            return ResponseEntity.ok(Result.success(imageUrl));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.fail());
-        }
-    } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Result.fail());
-    }
-}
-
     @PostMapping("/api/saveall")
     public Result save(@RequestPart("name") String name,
                        @RequestPart("discription") String discription,
@@ -134,9 +95,39 @@ public ResponseEntity<Result> updateImage(@PathVariable Integer id, @RequestPara
 
     //修改
     @PostMapping("/api/mod")
-    public Result mod(@RequestBody VesselTotal vesselTotal){
+    public Result mod(@RequestPart("id") Integer id,
+                      @RequestPart("name") String name,
+                      @RequestPart("discription") String discription,
+                      @RequestPart("picture") MultipartFile pictureFile) {
+        try {
+            VesselTotal vesselTotal = vesselTotalService.getById(id);
+            if (vesselTotal == null) {
+                return Result.fail();
+            }
 
-        return vesselTotalService.updateById(vesselTotal) ? Result.success() : Result.fail();
+            // 如果用户上传了新图片，则处理新图片
+            if (!pictureFile.isEmpty()) {
+                String fileName = pictureFile.getOriginalFilename();
+                byte[] bytes = pictureFile.getBytes();
+                Path path = Paths.get(uploadDir, fileName);
+                Files.write(path, bytes);
+                vesselTotal.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
+            }
+
+            // 更新数据库中的其他信息
+            vesselTotal.setName(name);
+            vesselTotal.setDiscription(discription);
+            boolean isUpdated = vesselTotalService.updateById(vesselTotal);
+
+            if (isUpdated) {
+                return Result.success();
+            } else {
+                return Result.fail();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail();
+        }
     }
     //删除
     @GetMapping("/api/delete")

@@ -21,5 +21,5 @@ public interface PoemsbydynastyService extends IService<Poemsbydynasty> {
     IPage pageC(IPage<Poemsbydynasty> page);
 
     IPage pageCC(IPage<Poemsbydynasty> page, Wrapper wrapper);
-
+    public Long countAll();
 }

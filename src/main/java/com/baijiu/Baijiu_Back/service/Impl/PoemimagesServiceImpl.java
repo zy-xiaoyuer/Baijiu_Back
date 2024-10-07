@@ -48,6 +48,9 @@ public class PoemimagesServiceImpl extends ServiceImpl<PoemimagesMapper, Poemima
     public IPage pageCC(IPage<Poemimages> page, Wrapper wrapper) {
         return poemimagesMapper.pageCC(page, wrapper);
     }
-
+    @Override
+    public Long countAll() {
+        return poemimagesMapper.selectCount(null);
+    }
 
 }

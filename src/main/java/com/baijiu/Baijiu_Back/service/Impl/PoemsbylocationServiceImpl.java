@@ -45,5 +45,9 @@ public class PoemsbylocationServiceImpl extends ServiceImpl<PoemsbylocationMappe
     public IPage pageCC(IPage<Poemsbylocation> page, Wrapper wrapper) {
         return poemsbylocationMapper.pageCC(page, wrapper);
     }
+    @Override
+    public Long countAll() {
+        return poemsbylocationMapper.selectCount(null);
+    }
 
 }

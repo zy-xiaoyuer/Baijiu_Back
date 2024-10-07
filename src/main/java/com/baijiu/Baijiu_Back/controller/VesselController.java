@@ -76,9 +76,39 @@ public class VesselController {
 
     //修改
     @PostMapping("/api/mod")
-    public Result mod(@RequestBody Vessel vessel){
+    public Result mod(@RequestPart("id") Integer id,
+                      @RequestPart("age") String age,
+                      @RequestPart("now") String now,
+                      @RequestPart("picture") MultipartFile pictureFile) {
+        try {
+            Vessel vessel = vesselService.getById(id);
+            if (vessel == null) {
+                return Result.fail();
+            }
 
-        return vesselService.updateById(vessel) ? Result.success() : Result.fail();
+            // 如果用户上传了新图片，则处理新图片
+            if (!pictureFile.isEmpty()) {
+                String fileName = pictureFile.getOriginalFilename();
+                byte[] bytes = pictureFile.getBytes();
+                Path path = Paths.get(uploadDir, fileName);
+                Files.write(path, bytes);
+                vessel.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
+            }
+
+            // 更新数据库中的其他信息
+            vessel.setAge(age);
+            vessel.setNow(now);
+            boolean isUpdated = vesselService.updateById(vessel);
+
+            if (isUpdated) {
+                return Result.success();
+            } else {
+                return Result.fail();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail();
+        }
     }
     //删除
     @GetMapping("/api/delete")

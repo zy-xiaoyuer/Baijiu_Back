@@ -22,5 +22,5 @@ public interface PoemsbylocationService extends IService<Poemsbylocation> {
     IPage pageC(IPage<Poemsbylocation> page);
 
     IPage pageCC(IPage<Poemsbylocation> page, Wrapper wrapper);
-
+    public Long countAll();
 }

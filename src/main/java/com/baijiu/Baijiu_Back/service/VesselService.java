@@ -21,4 +21,5 @@ public interface VesselService extends IService<Vessel> {
     IPage pageC(IPage<Vessel> page);
 
     IPage pageCC(IPage<Vessel> page, Wrapper wrapper);
+    public Long countAll();
 }

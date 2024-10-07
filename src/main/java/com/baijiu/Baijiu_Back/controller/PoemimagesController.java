@@ -84,9 +84,38 @@ public class PoemimagesController {
 
     //修改
     @PostMapping("/api/mod")
-    public Result mod(@RequestBody Poemimages poemimages){
+    public Result mod(@RequestPart("id") Integer id,
+                      @RequestPart("dynasty") String dynasty,
+                      @RequestPart("image") MultipartFile pictureFile) {
+        try {
+            Poemimages poemimages = poemimagesService.getById(id);
+            if (poemimages == null) {
+                return Result.fail();
+            }
 
-        return poemimagesService.updateById(poemimages) ? Result.success() : Result.fail();
+            // 如果用户上传了新图片，则处理新图片
+            if (!pictureFile.isEmpty()) {
+                String fileName = pictureFile.getOriginalFilename();
+                byte[] bytes = pictureFile.getBytes();
+                Path path = Paths.get(uploadDir, fileName);
+                Files.write(path, bytes);
+                poemimages.setImage("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
+            }
+
+            // 更新数据库中的其他信息
+            poemimages.setDynasty(dynasty);
+
+            boolean isUpdated = poemimagesService.updateById(poemimages);
+
+            if (isUpdated) {
+                return Result.success();
+            } else {
+                return Result.fail();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail();
+        }
     }
     //删除
     @GetMapping("/api/delete")

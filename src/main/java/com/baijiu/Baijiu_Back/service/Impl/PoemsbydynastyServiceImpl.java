@@ -44,6 +44,9 @@ public class PoemsbydynastyServiceImpl extends ServiceImpl<PoemsbydynastyMapper,
     public IPage pageCC(IPage<Poemsbydynasty> page, Wrapper wrapper) {
         return poemsbydynastyMapper.pageCC(page, wrapper);
     }
-
+    @Override
+    public Long countAll() {
+        return poemsbydynastyMapper.selectCount(null);
+    }
 
 }

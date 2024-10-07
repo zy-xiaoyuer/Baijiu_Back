@@ -1,5 +1,6 @@
 package com.baijiu.Baijiu_Back.service;
 
+import com.aliyun.core.annotation.Query;
 import com.baijiu.Baijiu_Back.entity.Users;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -8,8 +9,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -27,5 +30,6 @@ public interface UsersService extends IService<Users> {
     IPage pageC(IPage<Users> page);
 
     IPage pageCC(IPage<Users> page, Wrapper wrapper);
-
+    public Long countAll();
+    //Optional<Users> findById(Integer );
 }
