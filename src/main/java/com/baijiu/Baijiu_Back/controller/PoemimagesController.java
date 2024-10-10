@@ -48,7 +48,7 @@ public class PoemimagesController {
     public Result findByUsername(@RequestParam String imagename)
     {
         List list=poemimagesService.lambdaQuery().eq(Poemimages::getImagename,imagename).list();
-        return list.size()>0?Result.success():Result.fail();
+        return list.size()>0?Result.success():Result.fail("酒画不存在");
     }
 //    @GetMapping("/api/get-image/{id}")
 //    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
@@ -78,7 +78,7 @@ public class PoemimagesController {
     @PostMapping("/api/save")
     public Result save(@RequestBody Poemimages poemimages){
         //调用service实现新增用户
-        return poemimagesService.save(poemimages)?Result.success():Result.fail();
+        return poemimagesService.save(poemimages)?Result.success():Result.fail("保存失败");
 
     }
 
@@ -90,7 +90,7 @@ public class PoemimagesController {
         try {
             Poemimages poemimages = poemimagesService.getById(id);
             if (poemimages == null) {
-                return Result.fail();
+                return Result.fail("酒画为空");
             }
 
             // 如果用户上传了新图片，则处理新图片
@@ -110,17 +110,17 @@ public class PoemimagesController {
             if (isUpdated) {
                 return Result.success();
             } else {
-                return Result.fail();
+                return Result.fail("修改失败");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail();
+            return Result.fail("修改出现错误");
         }
     }
     //删除
     @GetMapping("/api/delete")
     public Result delete(@RequestParam("id") Integer id) {
-        return poemimagesService.removeById(id) ? Result.success() : Result.fail();
+        return poemimagesService.removeById(id) ? Result.success() : Result.fail("删除失败");
     }
 
     // 分页查询（模糊匹配用户名）
@@ -143,7 +143,7 @@ public class PoemimagesController {
     public Result getPoemById(@RequestParam("id") Integer id) {
         Poemimages poem = poemimagesService.getById(id);
         if (poem == null) {
-            return Result.fail();
+            return Result.fail("酒画不存在");
         }
         return Result.success(poem);
     }
@@ -153,7 +153,7 @@ public class PoemimagesController {
         if (id != null) {
             Poemimages poemimages = poemimagesService.getById(id);
             if (poemimages == null) {
-                return Result.fail();
+                return Result.fail("酒画不存在");
             }
             return Result.success(poemimages);
         } else {
@@ -177,7 +177,7 @@ public class PoemimagesController {
                        @RequestPart("image") MultipartFile pictureFile) {
         try {
             if (pictureFile.isEmpty()) {
-                return Result.fail();
+                return Result.fail("图片信息为空");
             }
 
             String fileName = pictureFile.getOriginalFilename();
@@ -196,7 +196,7 @@ public class PoemimagesController {
             return Result.success("/" + fileName); // 返回文件名
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail();
+            return Result.fail("保存失败");
         }
     }
 }

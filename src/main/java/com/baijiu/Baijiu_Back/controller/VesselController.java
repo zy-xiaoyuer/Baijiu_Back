@@ -70,7 +70,7 @@ public class VesselController {
     @PostMapping("/api/save")
     public Result save(@RequestBody Vessel vessel){
         //调用service实现新增用户
-        return vesselService.save(vessel)?Result.success():Result.fail();
+        return vesselService.save(vessel)?Result.success():Result.fail("保存失败");
 
     }
 
@@ -83,7 +83,7 @@ public class VesselController {
         try {
             Vessel vessel = vesselService.getById(id);
             if (vessel == null) {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
 
             // 如果用户上传了新图片，则处理新图片
@@ -103,17 +103,17 @@ public class VesselController {
             if (isUpdated) {
                 return Result.success();
             } else {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail();
+            return Result.fail("保存失败");
         }
     }
     //删除
     @GetMapping("/api/delete")
     public Result delete(@RequestParam("id") Integer id) {
-        return vesselService.removeById(id) ? Result.success() : Result.fail();
+        return vesselService.removeById(id) ? Result.success() : Result.fail("保存失败");
     }
 
     // 分页查询（模糊匹配用户名）
@@ -148,7 +148,7 @@ public class VesselController {
     public Result getPoemById(@RequestParam("id") Integer id) {
         Vessel vessel = vesselService.getById(id);
         if (vessel == null) {
-            return Result.fail();
+            return Result.fail("保存失败");
         }
         return Result.success(vessel);
     }
@@ -158,7 +158,7 @@ public class VesselController {
         if (id != null) {
             Vessel vessel = vesselService.getById(id);
             if (vessel == null) {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
             return Result.success(vessel);
         } else {
@@ -172,7 +172,7 @@ public class VesselController {
                        @RequestPart("picture") MultipartFile pictureFile) {
         try {
             if (pictureFile.isEmpty()) {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
 
             String fileName = pictureFile.getOriginalFilename();
@@ -190,7 +190,7 @@ public class VesselController {
             return Result.success("/" + fileName); // 返回文件名
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail();
+            return Result.fail("保存失败");
         }
     }
 }

@@ -32,4 +32,19 @@ public class PoemsbydynastySearchService implements SearchService<Poemsbydynasty
         }
         return poemsbydynastyService.page(page, queryWrapper);
     }
+    @Override
+    public long count(String keyword) {
+        LambdaQueryWrapper<Poemsbydynasty> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(keyword)) {
+            queryWrapper.like(Poemsbydynasty::getTitle, keyword)
+                    .or().like(Poemsbydynasty::getAuthor, keyword)
+                    .or().like(Poemsbydynasty::getDynasty, keyword)
+                    .or().like(Poemsbydynasty::getContent, keyword)
+                    .or().like(Poemsbydynasty::getPlace, keyword)
+                    .or().like(Poemsbydynasty::getEmotion, keyword)
+                    .or().like(Poemsbydynasty::getTime, keyword)
+            ;
+        }
+        return poemsbydynastyService.count(queryWrapper);
+    }
 }

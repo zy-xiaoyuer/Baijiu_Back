@@ -67,6 +67,58 @@ public class GlobalSearchController {
         int totalResults = totalVessels + totalPoemsByDynasty + totalPoemsByLocation + totalPoemImages;
         return Result.success(results,(long)totalResults);
     }
+    @PostMapping("/api/globalPage1")
+    public Result globalSearchWithPagination1(@RequestBody QueryPageParam queryPageParam) {
+        HashMap params = queryPageParam.getParam();
+        String keyword = (String) params.get("searchQuery");
+        int pageNum = queryPageParam.getPageNum();
+        int pageSize = queryPageParam.getPageSize();
+
+        // 步骤1: 获取每个表的总记录数
+        long totalVessels = vesselSearchService.count(keyword);
+        long totalPoemsByDynasty = poemsbydynastySearchService.count(keyword);
+        long totalPoemsByLocation = poembylocationSearchService.count(keyword);
+        long totalPoemImages = poemimagesSearchService.count(keyword);
+
+        // 计算总记录数
+        long totalResults = totalVessels + totalPoemsByDynasty + totalPoemsByLocation + totalPoemImages;
+
+        // 计算需要返回的记录的结束索引
+        long end = ((long)pageNum * pageSize) > totalResults ? totalResults : ((long)pageNum * pageSize);
+
+        List<Object> results = new ArrayList<>();
+
+        // 步骤2: 根据总记录数和请求的页码、页面大小计算每个表应该返回的记录数
+        // 并进行查询
+        long recordsTaken = 0;
+        if (recordsTaken < end) {
+            IPage<Vessel> vesselResult = vesselSearchService.search(keyword, new Page<>(1, (int)Math.min(end - recordsTaken, pageSize)));
+            results.addAll(vesselResult.getRecords());
+            recordsTaken += vesselResult.getRecords().size();
+        }
+        if (recordsTaken < end) {
+            IPage<Poemsbydynasty> poemsbydynastyResult = poemsbydynastySearchService.search(keyword, new Page<>(1, (int)Math.min(end - recordsTaken, pageSize)));
+            results.addAll(poemsbydynastyResult.getRecords());
+            recordsTaken += poemsbydynastyResult.getRecords().size();
+        }
+        if (recordsTaken < end) {
+            IPage<Poemsbylocation> poemsbylocationResult = poembylocationSearchService.search(keyword, new Page<>(1, (int)Math.min(end - recordsTaken, pageSize)));
+            results.addAll(poemsbylocationResult.getRecords());
+            recordsTaken += poemsbylocationResult.getRecords().size();
+        }
+        if (recordsTaken < end) {
+            IPage<Poemimages> poemimagesResult = poemimagesSearchService.search(keyword, new Page<>(1, (int)Math.min(end - recordsTaken, pageSize)));
+            results.addAll(poemimagesResult.getRecords());
+            recordsTaken += poemimagesResult.getRecords().size();
+        }
+
+        // 确保结果不超过请求的页面大小
+        if (results.size() > pageSize) {
+            List<Object> finalResults = results.subList(0, pageSize);
+            return Result.success(finalResults, totalResults);
+        }
+
+        return Result.success(results, totalResults);
+    }
 
 }
-//在前端添加一个输入字段，使用axios获取到接口

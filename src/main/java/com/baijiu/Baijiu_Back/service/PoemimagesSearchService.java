@@ -28,4 +28,14 @@ public class PoemimagesSearchService implements SearchService<Poemimages> {
         }
         return poemimagesService.page(page, queryWrapper);
     }
+    @Override
+    public long count(String keyword) {
+        LambdaQueryWrapper<Poemimages> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(keyword)) {
+            queryWrapper.like(Poemimages::getImagename, keyword)
+                    .or().like(Poemimages::getDynasty, keyword)
+            ;
+        }
+        return poemimagesService.count(queryWrapper);
+    }
 }

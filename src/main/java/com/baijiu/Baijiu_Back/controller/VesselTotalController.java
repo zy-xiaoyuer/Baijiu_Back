@@ -52,7 +52,7 @@ public class VesselTotalController {
                        @RequestPart("picture") MultipartFile pictureFile) {
         try {
             if (pictureFile.isEmpty()) {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
 
             String fileName = pictureFile.getOriginalFilename();
@@ -71,7 +71,7 @@ public class VesselTotalController {
             return Result.success("/" + fileName); // 返回文件名
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail();
+            return Result.fail("保存失败");
         }
     }
     //列表
@@ -84,13 +84,13 @@ public class VesselTotalController {
     public Result findByUsername(@RequestParam String name)
     {
         List list=vesselTotalService.lambdaQuery().eq(VesselTotal::getName,name).list();
-        return list.size()>0?Result.success():Result.fail();
+        return list.size()>0?Result.success():Result.fail("保存失败");
     }
 
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody VesselTotal vesselTotal){
-        return vesselTotalService.save(vesselTotal)?Result.success():Result.fail();
+        return vesselTotalService.save(vesselTotal)?Result.success():Result.fail("保存失败");
     }
 
     //修改
@@ -102,7 +102,7 @@ public class VesselTotalController {
         try {
             VesselTotal vesselTotal = vesselTotalService.getById(id);
             if (vesselTotal == null) {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
 
             // 如果用户上传了新图片，则处理新图片
@@ -122,17 +122,17 @@ public class VesselTotalController {
             if (isUpdated) {
                 return Result.success();
             } else {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail();
+            return Result.fail("保存失败");
         }
     }
     //删除
     @GetMapping("/api/delete")
     public Result delete(@RequestParam("id") Integer id) {
-        return vesselTotalService.removeById(id) ? Result.success() : Result.fail();
+        return vesselTotalService.removeById(id) ? Result.success() : Result.fail("保存失败");
     }
 
     // 分页查询（模糊匹配用户名）
@@ -156,7 +156,7 @@ public class VesselTotalController {
     public Result getPoemById(@RequestParam("id") Integer id) {
         VesselTotal vessel = vesselTotalService.getById(id);
         if (vessel == null) {
-            return Result.fail();
+            return Result.fail("保存失败");
         }
         return Result.success(vessel);
     }
@@ -166,7 +166,7 @@ public class VesselTotalController {
         if (id != null) {
             VesselTotal vessel = vesselTotalService.getById(id);
             if (vessel == null) {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
             return Result.success(vessel);
         } else {

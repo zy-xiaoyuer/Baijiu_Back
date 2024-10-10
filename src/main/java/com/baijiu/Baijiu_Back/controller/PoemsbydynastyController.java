@@ -43,13 +43,13 @@ public class PoemsbydynastyController {
     public Result findByUsername(@RequestParam String title)
     {
         List list=poemsbydynastyService.lambdaQuery().eq(Poemsbydynasty::getTitle,title).list();
-        return list.size()>0?Result.success():Result.fail();
+        return list.size()>0?Result.success():Result.fail("酒诗不存在");
     }
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody Poemsbydynasty poemsbydynasty){
         //调用service实现新增用户
-        return poemsbydynastyService.save(poemsbydynasty)?Result.success():Result.fail();
+        return poemsbydynastyService.save(poemsbydynasty)?Result.success():Result.fail("保存失败");
 
     }
 
@@ -57,12 +57,12 @@ public class PoemsbydynastyController {
     @PostMapping("/api/mod")
     public Result mod(@RequestBody Poemsbydynasty poemsbydynasty){
 
-        return poemsbydynastyService.updateById(poemsbydynasty) ? Result.success() : Result.fail();
+        return poemsbydynastyService.updateById(poemsbydynasty) ? Result.success() : Result.fail("保存失败");
     }
     //删除
     @GetMapping("/api/delete")
     public Result delete(@RequestParam("id") Integer id) {
-        return poemsbydynastyService.removeById(id) ? Result.success() : Result.fail();
+        return poemsbydynastyService.removeById(id) ? Result.success() : Result.fail("保存失败");
     }
 
     // 分页查询（按作者或朝代精确查询）
@@ -88,7 +88,7 @@ public class PoemsbydynastyController {
     public Result getPoemById(@RequestParam("id") Integer id) {
         Poemsbydynasty poem = poemsbydynastyService.getById(id);
         if (poem == null) {
-            return Result.fail();
+            return Result.fail("保存失败");
         }
         return Result.success(poem);
     }
@@ -98,7 +98,7 @@ public class PoemsbydynastyController {
         if (id != null) {
             Poemsbydynasty poemsbydynasty = poemsbydynastyService.getById(id);
             if (poemsbydynasty == null) {
-                return Result.fail();
+                return Result.fail("保存失败");
             }
             return Result.success(poemsbydynasty);
         } else {
@@ -111,7 +111,7 @@ public class PoemsbydynastyController {
     public Result getPoemInfoById(@RequestParam("id") Integer id) {
         Poemsbydynasty poem = poemsbydynastyService.getById(id);
         if (poem == null) {
-            return Result.fail();
+            return Result.fail("保存失败");
         }
         Map<String, Object> poemInfo = new HashMap<>();
         poemInfo.put("id", poem.getId());

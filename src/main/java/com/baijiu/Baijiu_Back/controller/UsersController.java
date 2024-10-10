@@ -35,6 +35,10 @@ public class UsersController {
     private UsersService usersService;
 
     //列表
+    @GetMapping("/api/total")
+    public Long  total() {
+        return usersService.countAll();
+    }
     @GetMapping("/api/list")
     public List<Users> list() {
         return usersService.list(); // 直接返回用户列表
@@ -43,24 +47,30 @@ public class UsersController {
     public Result findByUsername(@RequestParam String username)
     {
         List list=usersService.lambdaQuery().eq(Users::getUsername,username).list();
-        return list.size()>0?Result.success():Result.fail();
+        return list.size()>0?Result.success():Result.fail("未找到该用户");
     }
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody Users users){
-        return usersService.save(users)?Result.success():Result.fail();
+        if (usersService.lambdaQuery().eq(Users::getUsername, users.getUsername()).list().size() > 0) {
+            return Result.fail("用户名已经存在");
+        }
+        return usersService.save(users)?Result.success():Result.fail("保存失败");
 
     }
 
     //修改
     @PostMapping("/api/mod")
     public Result mod(@RequestBody Users users){
-        return usersService.updateById(users) ? Result.success() : Result.fail();
+        if (usersService.lambdaQuery().eq(Users::getUsername, users.getUsername()).list().size() > 0) {
+            return Result.fail("用户名已经存在");
+        }
+        return usersService.updateById(users) ? Result.success() : Result.fail("修改失败");
     }
     //删除
     @GetMapping("/api/delete")
     public Result delete(@RequestParam("id") Integer id) {
-            return usersService.removeById(id) ? Result.success() : Result.fail();
+            return usersService.removeById(id) ? Result.success() : Result.fail("删除失败");
     }
 
     // 分页查询（精确匹配用户名）

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SearchService<T> {
     IPage<T> search(String keyword, Page<T> page);
+    public long count(String keyword);
 }

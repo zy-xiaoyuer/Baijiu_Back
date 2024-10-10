@@ -36,7 +36,7 @@ public class AdminController {
             return Result.success();
             
         } else {
-            return Result.fail();
+            return Result.fail("登录失败！用户名或密码错误！");
         }
 
     }
@@ -45,10 +45,9 @@ public class AdminController {
     public Result deleteAccount(@RequestBody Admin admin) {
         boolean isDeleted = adminService.deleteAccount(admin.getId());
         if (isDeleted) {
-
             return Result.success("账号已注销");
         } else {
-            return Result.fail();
+            return Result.fail("账号注销失败");
         }
     }
 

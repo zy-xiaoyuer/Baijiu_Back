@@ -18,12 +18,11 @@ public class Result {
     private String msg;//成功/失败
     private  Long total;//总记录数
     private Object data;//数据
-
     public Result() {}
 
-    public static Result fail()
+    public static Result fail(String info)
     {
-        return result(400,"失败",0l,null);
+        return result(400,"失败",0l,info);
     }
     public static Result success()
     {

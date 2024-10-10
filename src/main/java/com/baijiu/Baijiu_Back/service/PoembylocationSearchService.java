@@ -35,4 +35,22 @@ public class PoembylocationSearchService implements SearchService<Poemsbylocatio
         }
         return poemsbylocationService.page(page, queryWrapper);
     }
+    @Override
+    public long count(String keyword) {
+        LambdaQueryWrapper<Poemsbylocation> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.hasText(keyword)) {
+            queryWrapper.like(Poemsbylocation::getPoetry, keyword)
+                    .or().like(Poemsbylocation::getFullName, keyword)
+                    .or().like(Poemsbylocation::getAuthor, keyword)
+                    .or().like(Poemsbylocation::getCity, keyword)
+                    .or().like(Poemsbylocation::getDynasty, keyword)
+                    .or().like(Poemsbylocation::getEmotion, keyword)
+                    .or().like(Poemsbylocation::getDistrict, keyword)
+                    .or().like(Poemsbylocation::getContent, keyword)
+                    .or().like(Poemsbylocation::getCountry, keyword)
+                    .or().like(Poemsbylocation::getProvince, keyword)
+            ;
+        }
+        return poemsbylocationService.count(queryWrapper);
+    }
 }
