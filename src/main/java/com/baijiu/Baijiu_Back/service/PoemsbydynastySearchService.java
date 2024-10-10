@@ -4,6 +4,8 @@ import com.baijiu.Baijiu_Back.common.SearchService;
 import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Vessel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -16,7 +18,7 @@ public class PoemsbydynastySearchService implements SearchService<Poemsbydynasty
     private PoemsbydynastyService poemsbydynastyService;
 
     @Override
-    public List<Poemsbydynasty> search(String keyword) {
+    public IPage<Poemsbydynasty> search(String keyword, Page<Poemsbydynasty> page) {
         LambdaQueryWrapper<Poemsbydynasty> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(keyword)) {
             queryWrapper.like(Poemsbydynasty::getTitle, keyword)
@@ -28,6 +30,6 @@ public class PoemsbydynastySearchService implements SearchService<Poemsbydynasty
                     .or().like(Poemsbydynasty::getTime, keyword)
             ;
         }
-        return poemsbydynastyService.list(queryWrapper);
+        return poemsbydynastyService.page(page, queryWrapper);
     }
 }

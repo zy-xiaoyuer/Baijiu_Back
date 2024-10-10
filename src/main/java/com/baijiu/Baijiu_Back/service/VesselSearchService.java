@@ -3,6 +3,8 @@ package com.baijiu.Baijiu_Back.service;
 import com.baijiu.Baijiu_Back.common.SearchService;
 import com.baijiu.Baijiu_Back.entity.Vessel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -15,12 +17,12 @@ public class VesselSearchService implements SearchService<Vessel> {
     private VesselService vesselService;
 
     @Override
-    public List<Vessel> search(String keyword) {
+    public IPage<Vessel> search(String keyword, Page<Vessel> page) {
         LambdaQueryWrapper<Vessel> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(keyword)) {
             queryWrapper.like(Vessel::getAge, keyword)
                     .or().like(Vessel::getNow, keyword);
         }
-        return vesselService.list(queryWrapper);
+        return vesselService.page(page, queryWrapper);
     }
 }

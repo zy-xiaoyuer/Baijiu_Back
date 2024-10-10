@@ -1,15 +1,21 @@
 package com.baijiu.Baijiu_Back.controller;
 
+import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
 import com.baijiu.Baijiu_Back.entity.Poemimages;
 import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
 import com.baijiu.Baijiu_Back.entity.Vessel;
 import com.baijiu.Baijiu_Back.service.*;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -26,29 +32,40 @@ public class GlobalSearchController {
     @Autowired
     private PoemimagesSearchService poemimagesSearchService;
 
-
-    @PostMapping("/api/global")
-    public Result globalSearch(@RequestParam("searchQuery") String searchQuery) {
-        String keyword = searchQuery;
+    @PostMapping("/api/globalPage")
+    public Result globalSearchWithPagination(@RequestBody QueryPageParam queryPageParam) {
+        HashMap params = queryPageParam.getParam();
+        String keyword = (String) params.get("searchQuery");
 
         List<Object> results = new ArrayList<>();
+        int totalVessels = 0, totalPoemsByDynasty = 0, totalPoemsByLocation = 0, totalPoemImages = 0;
 
         // 搜索酒器
-        List<Vessel> vessels = vesselSearchService.search(keyword);
-        results.addAll(vessels);
+        Page<Vessel> vesselPage = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
+        IPage<Vessel> vesselResult = vesselSearchService.search(keyword, vesselPage);
+        results.addAll(vesselResult.getRecords());
+        totalVessels = (int)vesselResult.getTotal();
 
-        //搜索酒诗
-        List<Poemsbydynasty> poemsbydynasties = poemsbydynastySearchService.search(keyword);
-        results.addAll(poemsbydynasties);
+        // 搜索酒诗
+        Page<Poemsbydynasty> poemsbydynastyPage = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
+        IPage<Poemsbydynasty> poemsbydynastyResult = poemsbydynastySearchService.search(keyword, poemsbydynastyPage);
+        results.addAll(poemsbydynastyResult.getRecords());
+        totalPoemsByDynasty = (int)poemsbydynastyResult.getTotal();
 
-        List<Poemsbylocation> poemsbylocations = poembylocationSearchService.search(keyword);
-        results.addAll(poemsbylocations);
+        // 搜索酒诗按地点
+        Page<Poemsbylocation> poemsbylocationPage = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
+        IPage<Poemsbylocation> poemsbylocationResult = poembylocationSearchService.search(keyword, poemsbylocationPage);
+        results.addAll(poemsbylocationResult.getRecords());
+        totalPoemsByLocation = (int)poemsbylocationResult.getTotal();
 
-        //搜索酒画
-        List<Poemimages> poemimages = poemimagesSearchService.search(keyword);
-        results.addAll(poemimages);
+        // 搜索酒画
+        Page<Poemimages> poemimagesPage = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
+        IPage<Poemimages> poemimagesResult = poemimagesSearchService.search(keyword, poemimagesPage);
+        results.addAll(poemimagesResult.getRecords());
+        totalPoemImages = (int)poemimagesResult.getTotal();
 
-        return Result.success(results);
+        int totalResults = totalVessels + totalPoemsByDynasty + totalPoemsByLocation + totalPoemImages;
+        return Result.success(results,(long)totalResults);
     }
 
 }

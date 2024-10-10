@@ -2,8 +2,11 @@ package com.baijiu.Baijiu_Back.service;
 
 import com.baijiu.Baijiu_Back.common.SearchService;
 import com.baijiu.Baijiu_Back.entity.Poemimages;
+import com.baijiu.Baijiu_Back.entity.Poemsbydynasty;
 import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -16,13 +19,13 @@ public class PoemimagesSearchService implements SearchService<Poemimages> {
     private PoemimagesService poemimagesService;
 
     @Override
-    public List<Poemimages> search(String keyword) {
+    public IPage<Poemimages> search(String keyword, Page<Poemimages> page) {
         LambdaQueryWrapper<Poemimages> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.hasText(keyword)) {
             queryWrapper.like(Poemimages::getImagename, keyword)
                     .or().like(Poemimages::getDynasty, keyword)
             ;
         }
-        return poemimagesService.list(queryWrapper);
+        return poemimagesService.page(page, queryWrapper);
     }
 }
