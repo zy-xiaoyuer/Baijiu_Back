@@ -23,15 +23,17 @@ public class VesselSearchService implements SearchService<Vessel> {
             queryWrapper.like(Vessel::getAge, keyword)
                     .or().like(Vessel::getNow, keyword);
         }
+
         return vesselService.page(page, queryWrapper);
     }
     @Override
     public long count(String keyword) {
-        LambdaQueryWrapper<Vessel> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(keyword)) {
-            queryWrapper.like(Vessel::getAge, keyword)
-                    .or().like(Vessel::getNow, keyword); // 注意：这里修正了重复的 .like(Vessel::getNow, keyword)
-        }
-        return vesselService.count(queryWrapper);
+            LambdaQueryWrapper<Vessel> queryWrapper = new LambdaQueryWrapper<>();
+            if (StringUtils.hasText(keyword)) {
+                queryWrapper.like(Vessel::getAge, keyword)
+                        .or().like(Vessel::getNow, keyword);
+            }
+            return vesselService.count(queryWrapper);
+
     }
 }

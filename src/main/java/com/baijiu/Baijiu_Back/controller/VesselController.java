@@ -116,7 +116,7 @@ public class VesselController {
         return vesselService.removeById(id) ? Result.success() : Result.fail("保存失败");
     }
 
-    // 分页查询（模糊匹配用户名）
+    // 分页查询
     @PostMapping("/api/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap params = queryPageParam.getParam();
