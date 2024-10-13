@@ -40,18 +40,24 @@ public class PoemsbylocationController {
     public List<Poemsbylocation> list() {
         return poemsbylocationService.list(); // 直接返回用户列表
     }
-
-    @GetMapping("/api/findByPoetry")
-    public Result findByUsername(@RequestParam String poetry)
-    {
-        List list=poemsbylocationService.lambdaQuery().eq(Poemsbylocation::getPoetry,poetry).list();
-        return list.size()>0?Result.success():Result.fail("保存失败");
+    @GetMapping("/api/total")
+    public Long  total() {
+        return poemsbylocationService.countAll();
     }
+
+@PostMapping("/api/checkpoetry")
+public Result checkpoetry(@RequestBody Map<String, String> params) {
+    String poetry = params.get("poetry");
+    if (poemsbylocationService.lambdaQuery().eq(Poemsbylocation::getPoetry, poetry).list().size() > 0) {
+        return Result.fail("酒诗已经存在");
+    }
+    return Result.success();
+}
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody Poemsbylocation poemsbylocation){
         //调用service实现新增用户
-        return poemsbylocationService.save(poemsbylocation)?Result.success():Result.fail("保存失败");
+        return poemsbylocationService.save(poemsbylocation)?Result.success():Result.fail("新增失败");
 
     }
 
@@ -59,12 +65,12 @@ public class PoemsbylocationController {
     @PostMapping("/api/mod")
     public Result mod(@RequestBody Poemsbylocation poemsbylocation){
 
-        return poemsbylocationService.updateById(poemsbylocation) ? Result.success() : Result.fail("保存失败");
+        return poemsbylocationService.updateById(poemsbylocation) ? Result.success() : Result.fail("修改失败");
     }
     //删除
     @GetMapping("/api/delete")
     public Result delete(@RequestParam("id") Integer id) {
-        return poemsbylocationService.removeById(id) ? Result.success() : Result.fail("保存失败");
+        return poemsbylocationService.removeById(id) ? Result.success() : Result.fail("删除失败");
     }
 
     // 分页查询（按作者、诗名或朝代精确查询）
@@ -89,7 +95,7 @@ public class PoemsbylocationController {
     public Result getPoemById(@RequestParam("id") Integer id) {
         Poemsbylocation poem = poemsbylocationService.getById(id);
         if (poem == null) {
-            return Result.fail("保存失败");
+            return Result.fail("酒器不存在");
         }
         return Result.success(poem);
     }
@@ -99,7 +105,7 @@ public class PoemsbylocationController {
         if (id != null) {
            Poemsbylocation poemsbylocation = poemsbylocationService.getById(id);
             if (poemsbylocation == null) {
-                return Result.fail("保存失败");
+                return Result.fail("酒器不存在");
             }
             return Result.success(poemsbylocation);
         } else {

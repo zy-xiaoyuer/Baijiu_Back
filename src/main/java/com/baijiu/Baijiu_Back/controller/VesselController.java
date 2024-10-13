@@ -44,46 +44,56 @@ public class VesselController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-//    @GetMapping("/api/get-image/{id}")
-//    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-//        Vessel vessel = vesselService.getById(id);
-//        if (vessel != null && vessel.getPicture() != null) {
-//
-//            response.setContentType("image/jpeg");
-//            try {
-//                response.getOutputStream().write(vessel.getPicture());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//        }
-//    }
+
+    @GetMapping("/api/total")
+    public Long  total() {
+        return vesselService.countAll();
+    }
     //列表
     @GetMapping("/api/list")
     public List<Vessel> list() {
         return vesselService.list(); // 直接返回用户列表
     }
 
+    @PostMapping("/api/saveall")
+    public Result save(@RequestPart("age") String age,
+                       @RequestPart("now") String now,
+                       @RequestPart("picture") MultipartFile pictureFile) {
+        try {
+            if (pictureFile.isEmpty()) {
+                return Result.fail("文件为空，保存失败");
+            }
 
-    //新增
-    @PostMapping("/api/save")
-    public Result save(@RequestBody Vessel vessel){
-        //调用service实现新增用户
-        return vesselService.save(vessel)?Result.success():Result.fail("保存失败");
+            String fileName = pictureFile.getOriginalFilename();
+            byte[] bytes = pictureFile.getBytes();
+            Path path = Paths.get(uploadDir,  fileName);
 
+            Files.write(path, bytes);
+            // 打印成功保存文件的语句
+            System.out.println("文件 " + fileName + " 已成功保存到 " + path);
+            // 保存文件名到数据库
+            Vessel vessel=new Vessel();
+            vessel.setAge(age);
+            vessel.setNow(now);
+            vessel.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName); // 注意路径前缀
+
+            vesselService.save(vessel);
+            return Result.success("/" + fileName); // 返回文件名
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail("保存失败");
+        }
     }
-
-    //修改
     @PostMapping("/api/mod")
-    public Result mod(@RequestPart("id") Integer id,
+    public Result mod(@RequestParam("id") Integer id,
                       @RequestPart("age") String age,
                       @RequestPart("now") String now,
-                      @RequestPart("picture") MultipartFile pictureFile) {
+                      @RequestParam("picture") MultipartFile pictureFile) {
         try {
+            // 根据 ID 查找现有的记录
             Vessel vessel = vesselService.getById(id);
             if (vessel == null) {
-                return Result.fail("保存失败");
+                return Result.fail("未找到要修改的记录");
             }
 
             // 如果用户上传了新图片，则处理新图片
@@ -93,22 +103,33 @@ public class VesselController {
                 Path path = Paths.get(uploadDir, fileName);
                 Files.write(path, bytes);
                 vessel.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
+                // 打印成功保存文件的语句
+                System.out.println("文件 " + fileName + " 已成功保存到 " + path);
             }
 
             // 更新数据库中的其他信息
             vessel.setAge(age);
-            vessel.setNow(now);
-            boolean isUpdated = vesselService.updateById(vessel);
+           vessel.setNow(now);
 
+            // 执行更新操作
+            boolean isUpdated = vesselService.updateById(vessel);
             if (isUpdated) {
-                return Result.success();
+                Vessel updatedVessel = vesselService.getById(id);
+                return Result.success(updatedVessel);
             } else {
-                return Result.fail("保存失败");
+                return Result.fail("修改失败");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail("保存失败");
+            return Result.fail("修改失败");
         }
+    }
+    //新增
+    @PostMapping("/api/save")
+    public Result save(@RequestBody Vessel vessel){
+        //调用service实现新增用户
+        return vesselService.save(vessel)?Result.success():Result.fail("保存失败");
+
     }
     //删除
     @GetMapping("/api/delete")
@@ -166,31 +187,5 @@ public class VesselController {
             return Result.success(vessels);
         }
     }
-    @PostMapping("/api/saveall")
-    public Result save(@RequestPart("age") String age,
-                       @RequestPart("now") String now,
-                       @RequestPart("picture") MultipartFile pictureFile) {
-        try {
-            if (pictureFile.isEmpty()) {
-                return Result.fail("保存失败");
-            }
 
-            String fileName = pictureFile.getOriginalFilename();
-            byte[] bytes = pictureFile.getBytes();
-            Path path = Paths.get(uploadDir,  fileName);
-
-            Files.write(path, bytes);
-
-            // 保存文件名到数据库
-            Vessel vessel = new Vessel();
-            vessel.setAge(age);
-            vessel.setNow(now);
-            vessel.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
-            vesselService.save(vessel);
-            return Result.success("/" + fileName); // 返回文件名
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Result.fail("保存失败");
-        }
-    }
 }

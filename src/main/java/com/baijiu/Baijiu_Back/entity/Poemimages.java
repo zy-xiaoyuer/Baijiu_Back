@@ -30,5 +30,4 @@ public class Poemimages implements Serializable {
 
     private String image;
 
-    private String dynasty;
 }

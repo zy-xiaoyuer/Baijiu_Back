@@ -50,23 +50,18 @@ public class PoemimagesController {
         List list=poemimagesService.lambdaQuery().eq(Poemimages::getImagename,imagename).list();
         return list.size()>0?Result.success():Result.fail("酒画不存在");
     }
-//    @GetMapping("/api/get-image/{id}")
-//    public void getImage(@PathVariable Integer id, HttpServletResponse response) {
-//        Poemimages poemimages = poemimagesService.getById(id);
-//        if (poemimages != null && poemimages.getImage() != null) {
-//            // 设置响应的类型为图片类型
-//            response.setContentType("image/jpeg");
-//            // 将图片的字节数据写入响应输出流
-//            try {
-//                response.getOutputStream().write(poemimages.getImage());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            // 如果没有找到图片，返回错误或者默认图片
-//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//        }
-//    }
+    @GetMapping("/api/total")
+    public Long  total() {
+        return poemimagesService.countAll();
+    }
+    @PostMapping("/api/checkname")
+    public Result checkname(@RequestBody Map<String, String> params) {
+        String  imagename = params.get("imagename");
+        if (poemimagesService.lambdaQuery().eq(Poemimages::getImagename, imagename).list().size() > 0) {
+            return Result.fail("酒画已经存在");
+        }
+        return Result.success();
+    }
     //列表
     @GetMapping("/api/list")
     public List<Poemimages> list() {
@@ -84,13 +79,14 @@ public class PoemimagesController {
 
     //修改
     @PostMapping("/api/mod")
-    public Result mod(@RequestPart("id") Integer id,
-                      @RequestPart("dynasty") String dynasty,
-                      @RequestPart("image") MultipartFile pictureFile) {
+    public Result mod(@RequestParam("id") Integer id,
+                      @RequestPart("imagename") String imagename,
+                      @RequestParam("image") MultipartFile pictureFile) {
         try {
+            // 根据 ID 查找现有的记录
             Poemimages poemimages = poemimagesService.getById(id);
             if (poemimages == null) {
-                return Result.fail("酒画为空");
+                return Result.fail("未找到要修改的记录");
             }
 
             // 如果用户上传了新图片，则处理新图片
@@ -100,21 +96,25 @@ public class PoemimagesController {
                 Path path = Paths.get(uploadDir, fileName);
                 Files.write(path, bytes);
                 poemimages.setImage("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
+                // 打印成功保存文件的语句
+                System.out.println("文件 " + fileName + " 已成功保存到 " + path);
             }
 
             // 更新数据库中的其他信息
-            poemimages.setDynasty(dynasty);
+            poemimages.setImagename(imagename);
 
+
+            // 执行更新操作
             boolean isUpdated = poemimagesService.updateById(poemimages);
-
             if (isUpdated) {
-                return Result.success();
+                Poemimages updated= poemimagesService.getById(id);
+                return Result.success(updated);
             } else {
                 return Result.fail("修改失败");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail("修改出现错误");
+            return Result.fail("修改失败");
         }
     }
     //删除
@@ -162,22 +162,23 @@ public class PoemimagesController {
         }
     }
     //统计每个朝代的酒画数量
-    @GetMapping("/api/countByDynasty")
-    public Result countByDynasty() {
-        List<Poemimages> images = poemimagesService.list();
-        Map<String, Long> dynastyCount = new HashMap<>();
-        for (Poemimages image : images) {
-            String dynasty = image.getDynasty();
-            dynastyCount.put(dynasty, dynastyCount.getOrDefault(dynasty, 0L) + 1);
-        }
-        return Result.success(dynastyCount);
-    }
+//    @GetMapping("/api/countByDynasty")
+//    public Result countByDynasty() {
+//        List<Poemimages> images = poemimagesService.list();
+//        Map<String, Long> dynastyCount = new HashMap<>();
+//        for (Poemimages image : images) {
+//            String dynasty = image.getDynasty();
+//            dynastyCount.put(dynasty, dynastyCount.getOrDefault(dynasty, 0L) + 1);
+//        }
+//        return Result.success(dynastyCount);
+//    }
     @PostMapping("/api/saveall")
     public Result save(@RequestPart("imagename") String imagename,
+
                        @RequestPart("image") MultipartFile pictureFile) {
         try {
             if (pictureFile.isEmpty()) {
-                return Result.fail("图片信息为空");
+                return Result.fail("文件为空，保存失败");
             }
 
             String fileName = pictureFile.getOriginalFilename();
@@ -185,11 +186,11 @@ public class PoemimagesController {
             Path path = Paths.get(uploadDir,  fileName);
 
             Files.write(path, bytes);
-
+            // 打印成功保存文件的语句
+            System.out.println("文件 " + fileName + " 已成功保存到 " + path);
             // 保存文件名到数据库
             Poemimages poemimages = new Poemimages();
-            poemimages.setImagename(imagename);
-
+           poemimages.setImagename(imagename);
             poemimages.setImage("src\\\\main\\\\resources\\\\upload\\\\" + fileName); // 注意路径前缀
 
             poemimagesService.save(poemimages);

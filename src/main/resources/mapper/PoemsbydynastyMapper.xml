@@ -13,6 +13,6 @@
     </select>
 
     <select id="pageCC" resultType="com.baijiu.Baijiu_Back.entity.Poemsbydynasty">
-        select *from poemsbydynasty ${ew.customSqlSegment}
+        select *from poemsbydynasty
     </select>
 </mapper>

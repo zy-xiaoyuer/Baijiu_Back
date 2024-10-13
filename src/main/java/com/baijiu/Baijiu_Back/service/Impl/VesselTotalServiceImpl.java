@@ -42,7 +42,10 @@ public class VesselTotalServiceImpl extends ServiceImpl<VesselTotalMapper, Vesse
     public IPage pageCC(IPage<VesselTotal> page, Wrapper wrapper) {
         return vesselTotalMapper.pageCC(page, wrapper);
     }
-
+    @Override
+    public Long countAll() {
+        return vesselTotalMapper.selectCount(null);
+    }
 
 
 }

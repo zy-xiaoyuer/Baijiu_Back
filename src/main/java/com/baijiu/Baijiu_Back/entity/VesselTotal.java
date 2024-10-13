@@ -30,7 +30,7 @@ public class VesselTotal implements Serializable {
 
     private String discription;
 
-    @TableId(value = "id", type = IdType.AUTO)
+   // @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     public Integer getId() {

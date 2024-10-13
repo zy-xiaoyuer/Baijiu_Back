@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -49,22 +50,23 @@ public class UsersController {
         List list=usersService.lambdaQuery().eq(Users::getUsername,username).list();
         return list.size()>0?Result.success():Result.fail("未找到该用户");
     }
+    @PostMapping("/api/checkUsername")
+    public Result checkUsername(@RequestBody Map<String, String> params) {
+        String username = params.get("username");
+        if (usersService.lambdaQuery().eq(Users::getUsername, username).list().size() > 0) {
+            return Result.fail("用户名已经存在");
+        }
+        return Result.success();
+    }
     //新增
     @PostMapping("/api/save")
     public Result save(@RequestBody Users users){
-        if (usersService.lambdaQuery().eq(Users::getUsername, users.getUsername()).list().size() > 0) {
-            return Result.fail("用户名已经存在");
-        }
         return usersService.save(users)?Result.success():Result.fail("保存失败");
-
     }
 
     //修改
     @PostMapping("/api/mod")
     public Result mod(@RequestBody Users users){
-        if (usersService.lambdaQuery().eq(Users::getUsername, users.getUsername()).list().size() > 0) {
-            return Result.fail("用户名已经存在");
-        }
         return usersService.updateById(users) ? Result.success() : Result.fail("修改失败");
     }
     //删除

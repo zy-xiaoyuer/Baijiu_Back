@@ -1,6 +1,7 @@
 package com.baijiu.Baijiu_Back.controller;
 import com.baijiu.Baijiu_Back.common.QueryPageParam;
 import com.baijiu.Baijiu_Back.common.Result;
+import com.baijiu.Baijiu_Back.entity.Poemsbylocation;
 import com.baijiu.Baijiu_Back.entity.Vessel;
 import com.baijiu.Baijiu_Back.entity.VesselTotal;
 
@@ -8,6 +9,7 @@ import com.baijiu.Baijiu_Back.service.VesselTotalService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -45,14 +48,25 @@ public class VesselTotalController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-
+    @GetMapping("/api/total")
+    public Long  total() {
+        return vesselTotalService.countAll();
+    }
+    @PostMapping("/api/checkname")
+    public Result checkname(@RequestBody Map<String, String> params) {
+        String poetry = params.get("name");
+        if (vesselTotalService.lambdaQuery().eq(VesselTotal::getName, poetry).list().size() > 0) {
+            return Result.fail("酒器已经存在");
+        }
+        return Result.success();
+    }
     @PostMapping("/api/saveall")
     public Result save(@RequestPart("name") String name,
                        @RequestPart("discription") String discription,
                        @RequestPart("picture") MultipartFile pictureFile) {
         try {
             if (pictureFile.isEmpty()) {
-                return Result.fail("保存失败");
+                return Result.fail("文件为空，保存失败");
             }
 
             String fileName = pictureFile.getOriginalFilename();
@@ -60,7 +74,8 @@ public class VesselTotalController {
             Path path = Paths.get(uploadDir,  fileName);
 
             Files.write(path, bytes);
-
+            // 打印成功保存文件的语句
+            System.out.println("文件 " + fileName + " 已成功保存到 " + path);
             // 保存文件名到数据库
             VesselTotal vesselTotal = new VesselTotal();
             vesselTotal.setName(name);
@@ -95,14 +110,15 @@ public class VesselTotalController {
 
     //修改
     @PostMapping("/api/mod")
-    public Result mod(@RequestPart("id") Integer id,
+    public Result mod(@RequestParam("id") Integer id,
                       @RequestPart("name") String name,
                       @RequestPart("discription") String discription,
-                      @RequestPart("picture") MultipartFile pictureFile) {
+                      @RequestParam("picture") MultipartFile pictureFile) {
         try {
+            // 根据 ID 查找现有的记录
             VesselTotal vesselTotal = vesselTotalService.getById(id);
             if (vesselTotal == null) {
-                return Result.fail("保存失败");
+                return Result.fail("未找到要修改的记录");
             }
 
             // 如果用户上传了新图片，则处理新图片
@@ -112,21 +128,25 @@ public class VesselTotalController {
                 Path path = Paths.get(uploadDir, fileName);
                 Files.write(path, bytes);
                 vesselTotal.setPicture("src\\\\main\\\\resources\\\\upload\\\\" + fileName);
+                // 打印成功保存文件的语句
+                System.out.println("文件 " + fileName + " 已成功保存到 " + path);
             }
 
             // 更新数据库中的其他信息
             vesselTotal.setName(name);
             vesselTotal.setDiscription(discription);
+           //vesselTotalService.updateById(vesselTotal);
+            // 执行更新操作
             boolean isUpdated = vesselTotalService.updateById(vesselTotal);
-
             if (isUpdated) {
-                return Result.success();
+                VesselTotal updatedVesselTotal = vesselTotalService.getById(id);
+                return Result.success(updatedVesselTotal);
             } else {
-                return Result.fail("保存失败");
+                return Result.fail("修改失败");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.fail("保存失败");
+            return Result.fail("修改失败");
         }
     }
     //删除
