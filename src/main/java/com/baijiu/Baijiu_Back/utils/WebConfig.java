@@ -15,11 +15,11 @@ public class WebConfig implements WebMvcConfigurer { // 继承跨域请求的类
     @Override
     public void addCorsMappings(CorsRegistry registry) { // 跨域处理的方法
         registry.addMapping("/**") // 任意访问都允许跨域
-                .allowedOrigins("http://172.27.0.40:9000")  // 允许所有域的跨域请求
-//                .allowedOrigins("http://localhost:9000")  // 允许所有域的跨域请求
+//                .allowedOrigins("http://172.27.0.40:9000")  // 允许所有域的跨域请求
+                .allowedOrigins("http://localhost:8080")  // 允许所有域的跨域请求
 //                .allowedOrigins("*")  // 允许所有域的跨域请求
                 .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE") // 跨域请求类型
-                .allowedOriginPatterns("*")
+//                .allowedOriginPatterns("*")
                 .maxAge(3600) // 超时时间
                 .allowCredentials(true)// 允许携带信息
                 .allowedHeaders("*")
@@ -27,7 +27,6 @@ public class WebConfig implements WebMvcConfigurer { // 继承跨域请求的类
         ; // 允许携带信息
 
     }
-
 
 
     //静态资源图片的路径

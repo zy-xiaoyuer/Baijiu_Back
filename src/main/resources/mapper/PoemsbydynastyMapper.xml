@@ -3,13 +3,19 @@
 <mapper namespace="com.baijiu.Baijiu_Back.mapper.PoemsbydynastyMapper">
     <select id="selectPage" resultType="com.baijiu.Baijiu_Back.entity.Poemsbydynasty">
         SELECT * FROM poemsbydynasty
-        <if test="sql != null and sql.trim() != ''">
-            AND ${sql}
-        </if>
+        <where>
+            <if test="ew != null">
+                <if test="ew.sqlSegment != null and ew.sqlSegment.trim() != ''">
+                    AND ${ew.sqlSegment}
+                </if>
+            </if>
+        </where>
+        LIMIT #{page.size} OFFSET #{page.offset}
     </select>
 
     <select id="pageC" resultType="com.baijiu.Baijiu_Back.entity.Poemsbydynasty">
         select *from poemsbydynasty
+
     </select>
 
     <select id="pageCC" resultType="com.baijiu.Baijiu_Back.entity.Poemsbydynasty">
