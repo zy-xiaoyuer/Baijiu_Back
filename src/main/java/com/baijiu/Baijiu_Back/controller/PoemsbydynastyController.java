@@ -99,6 +99,24 @@ public class PoemsbydynastyController {
         }
         return Result.success(poem);
     }
+    @GetMapping("/api/getPoemStatistics")
+    public Result getPoemStatistics() {
+            StringBuilder result = new StringBuilder();
+
+            // 获取朝代统计
+            Map<String, Integer> dynastyStats = poemsbydynastyService.getDynastyStatistics();
+            dynastyStats.forEach((dynasty, count) -> {
+                result.append("Dynasty: ").append(dynasty).append(", Count: ").append(count).append("; ");
+            });
+
+            // 获取作者统计
+            Map<String, Integer> authorStats = poemsbydynastyService.getAuthorStatistics();
+            authorStats.forEach((author, count) -> {
+                result.append("Author: ").append(author).append(", Count: ").append(count).append("; ");
+            });
+
+            return Result.success(result.toString());
+    }
     //不传id就打印全部结果，传id打印筛选后的结果
     @GetMapping("/api/getPoemByIdsearch")
     public Result getPoemByIdsearch(@RequestParam(value = "id", required = false) Integer id) {

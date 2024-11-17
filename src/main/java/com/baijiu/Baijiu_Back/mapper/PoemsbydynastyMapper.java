@@ -8,6 +8,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -24,5 +28,8 @@ public interface PoemsbydynastyMapper extends BaseMapper<Poemsbydynasty> {
     IPage pageC(IPage<Poemsbydynasty> page);
 
     IPage pageCC(IPage<Poemsbydynasty> page, @Param(Constants.WRAPPER) Wrapper wrapper);
-
+    @Select("SELECT dynasty, COUNT(*) as count FROM poemsbydynasty GROUP BY dynasty")
+    List<Map<String, Object>> getDynastyStatistics();
+    @Select("SELECT author, COUNT(*) as count FROM poemsbydynasty GROUP BY author")
+    List<Map<String, Object>> getAuthorStatistics();
 }
