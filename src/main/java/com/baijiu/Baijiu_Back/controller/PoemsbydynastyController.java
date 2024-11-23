@@ -99,37 +99,40 @@ public class PoemsbydynastyController {
         }
         return Result.success(poem);
     }
-    @GetMapping("/api/getPoemStatistics")
-    public Result getPoemStatistics() {
-            StringBuilder result = new StringBuilder();
 
-            // 获取朝代统计
-            Map<String, Integer> dynastyStats = poemsbydynastyService.getDynastyStatistics();
-            dynastyStats.forEach((dynasty, count) -> {
-                result.append("Dynasty: ").append(dynasty).append(", Count: ").append(count).append("; ");
-            });
-
-            // 获取作者统计
-            Map<String, Integer> authorStats = poemsbydynastyService.getAuthorStatistics();
-            authorStats.forEach((author, count) -> {
-                result.append("Author: ").append(author).append(", Count: ").append(count).append("; ");
-            });
-
-            return Result.success(result.toString());
-    }
     //不传id就打印全部结果，传id打印筛选后的结果
     @GetMapping("/api/getPoemByIdsearch")
-    public Result getPoemByIdsearch(@RequestParam(value = "id", required = false) Integer id) {
-        if (id != null) {
-            Poemsbydynasty poemsbydynasty = poemsbydynastyService.getById(id);
-            if (poemsbydynasty == null) {
-                return Result.fail("酒诗不存在");
-            }
-            return Result.success(poemsbydynasty);
-        } else {
-            List<Poemsbydynasty> poemsbydynasties = poemsbydynastyService.list();
-            return Result.success(poemsbydynasties);
-        }
+    public Result getPoemByIdsearch() {
+        StringBuilder result = new StringBuilder();
+        // 获取朝代统计
+        Map<String, Integer> dynastyStats = poemsbydynastyService.getDynastyStatistics();
+        dynastyStats.forEach((dynasty, count) -> {
+            result.append("Dynasty: ").append(dynasty).append(", Count: ").append(count).append("; ");
+        });
+
+        // 获取作者统计
+        Map<String, Integer> authorStats = poemsbydynastyService.getAuthorStatistics();
+        authorStats.forEach((author, count) -> {
+            result.append("Author: ").append(author).append(", Count: ").append(count).append("; ");
+        });
+
+        return Result.success(result.toString());
+    }
+    @GetMapping("/api/getPoemStatistics")
+    public Result getPoemStatistics() {
+        // 获取朝代统计
+        Map<String, Integer> dynastyStats = poemsbydynastyService.getDynastyStatistics();
+
+        // 获取作者统计
+        Map<String, Integer> authorStats = poemsbydynastyService.getAuthorStatistics();
+
+        // 构建返回的 Map
+        Map<String, Object> response = new HashMap<>();
+        response.put("dynastyStats", dynastyStats);
+        response.put("authorStats", authorStats);
+
+        // 返回结果
+        return Result.success(response);
     }
     //返回朝代和作者（用于柱状图）
     @GetMapping("/api/getPoemInfoById")

@@ -28,8 +28,8 @@ public interface PoemsbydynastyMapper extends BaseMapper<Poemsbydynasty> {
     IPage pageC(IPage<Poemsbydynasty> page);
 
     IPage pageCC(IPage<Poemsbydynasty> page, @Param(Constants.WRAPPER) Wrapper wrapper);
-    @Select("SELECT dynasty, COUNT(*) as count FROM poemsbydynasty GROUP BY dynasty")
+    @Select("SELECT dynasty_name AS dynasty, poem_count AS count FROM dynasty_poem_count")
     List<Map<String, Object>> getDynastyStatistics();
-    @Select("SELECT author, COUNT(*) as count FROM poemsbydynasty GROUP BY author")
+    @Select("SELECT author_name AS author, poem_count AS count FROM author_poem_count")
     List<Map<String, Object>> getAuthorStatistics();
 }
